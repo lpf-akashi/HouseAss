@@ -1,0 +1,1503 @@
+<!doctype html>
+<html lang="zh-CN">
+  <head>
+    <meta charset="UTF-8" />
+    <meta name="viewport" content="width=device-width, initial-scale=1.0" />
+    <title>豪斯助手 Demo（PRD 样例）</title>
+    <style>
+      :root{
+        --bg:#0b1020;
+        --panel:#121a33;
+        --panel2:#0f1730;
+        --text:#e8ecff;
+        --muted:#a9b3d6;
+        --brand:#5b8cff;
+        --brand2:#8b5bff;
+        --good:#3ddc97;
+        --warn:#ffb020;
+        --bad:#ff5b7a;
+        --border:rgba(255,255,255,.10);
+        --shadow: 0 12px 40px rgba(0,0,0,.35);
+        --radius: 16px;
+        --radius2: 12px;
+        --font: ui-sans-serif, system-ui, -apple-system, "PingFang SC","Microsoft YaHei", "Segoe UI", Roboto, Helvetica, Arial, "Apple Color Emoji", "Segoe UI Emoji";
+      }
+      *{ box-sizing:border-box; }
+      html,body{ height:100%; }
+      body{
+        margin:0;
+        font-family:var(--font);
+        background: radial-gradient(1200px 600px at 25% -10%, rgba(91,140,255,.35), transparent 60%),
+                    radial-gradient(900px 500px at 90% 10%, rgba(139,91,255,.25), transparent 55%),
+                    radial-gradient(800px 500px at 60% 110%, rgba(61,220,151,.18), transparent 60%),
+                    var(--bg);
+        color:var(--text);
+      }
+      a{ color:inherit; text-decoration:none; }
+      .wrap{ max-width:1200px; margin:0 auto; padding:20px 18px 40px; }
+      .topbar{
+        position:sticky; top:0; z-index:20;
+        backdrop-filter: blur(14px);
+        background: rgba(11,16,32,.65);
+        border-bottom:1px solid var(--border);
+      }
+      .topbar .wrap{ padding:14px 18px; display:flex; align-items:center; gap:12px; }
+      .logo{
+        display:flex; align-items:center; gap:10px; min-width:220px;
+      }
+      .mark{
+        width:38px; height:38px; border-radius:12px;
+        background: linear-gradient(135deg, var(--brand), var(--brand2));
+        box-shadow: 0 14px 30px rgba(91,140,255,.25);
+        position:relative;
+      }
+      .mark::after{
+        content:"";
+        position:absolute; inset:10px;
+        border:1px solid rgba(255,255,255,.55);
+        border-radius:10px;
+        transform: rotate(12deg);
+        opacity:.8;
+      }
+      .logo h1{ font-size:15px; margin:0; font-weight:750; letter-spacing:.2px; }
+      .logo .sub{ font-size:12px; color:var(--muted); margin-top:2px; }
+      .nav{
+        display:flex; gap:8px; flex:1;
+        overflow:auto;
+      }
+      .pill{
+        white-space:nowrap;
+        padding:10px 12px;
+        border-radius:999px;
+        border:1px solid var(--border);
+        background: rgba(18,26,51,.55);
+        color:var(--muted);
+        font-size:13px;
+        cursor:pointer;
+        user-select:none;
+      }
+      .pill.active{
+        background: rgba(91,140,255,.20);
+        border-color: rgba(91,140,255,.50);
+        color: var(--text);
+      }
+      .right{
+        display:flex; align-items:center; gap:10px;
+      }
+      .badge{
+        font-size:12px;
+        padding:7px 10px;
+        border-radius:999px;
+        border:1px solid var(--border);
+        background: rgba(18,26,51,.55);
+        color:var(--muted);
+      }
+      .badge strong{ color:var(--text); font-weight:700; }
+      .btn{
+        border:1px solid var(--border);
+        background: rgba(18,26,51,.65);
+        color: var(--text);
+        padding:10px 12px;
+        border-radius:12px;
+        cursor:pointer;
+        font-size:13px;
+      }
+      .btn.primary{
+        border-color: rgba(91,140,255,.55);
+        background: linear-gradient(180deg, rgba(91,140,255,.35), rgba(91,140,255,.18));
+      }
+      .btn.good{
+        border-color: rgba(61,220,151,.55);
+        background: linear-gradient(180deg, rgba(61,220,151,.22), rgba(61,220,151,.10));
+      }
+      .btn.ghost{
+        background: transparent;
+      }
+      .btn:active{ transform: translateY(1px); }
+      .grid{
+        display:grid;
+        grid-template-columns: 360px 1fr;
+        gap:14px;
+        align-items:start;
+      }
+      @media (max-width: 980px){
+        .grid{ grid-template-columns:1fr; }
+        .logo{ min-width:auto; }
+      }
+      .card{
+        border:1px solid var(--border);
+        background: linear-gradient(180deg, rgba(18,26,51,.82), rgba(15,23,48,.72));
+        border-radius: var(--radius);
+        box-shadow: var(--shadow);
+        overflow:hidden;
+      }
+      .card .hd{
+        padding:14px 14px 10px;
+        display:flex; align-items:center; justify-content:space-between;
+        border-bottom: 1px solid rgba(255,255,255,.06);
+      }
+      .card .hd .title{
+        font-size:14px;
+        font-weight:720;
+        margin:0;
+      }
+      .card .bd{ padding:14px; }
+      .muted{ color: var(--muted); }
+      .kpi{
+        display:grid;
+        grid-template-columns: repeat(4, 1fr);
+        gap:10px;
+      }
+      @media (max-width: 980px){
+        .kpi{ grid-template-columns: repeat(2, 1fr); }
+      }
+      .k{
+        border:1px solid rgba(255,255,255,.08);
+        background: rgba(11,16,32,.35);
+        border-radius: 14px;
+        padding:10px 12px;
+        min-height:66px;
+      }
+      .k .lab{ font-size:12px; color:var(--muted); }
+      .k .val{ margin-top:6px; font-size:16px; font-weight:780; letter-spacing:.2px; }
+      .k .hint{ margin-top:4px; font-size:12px; color:var(--muted); }
+      .row{ display:flex; gap:10px; align-items:center; flex-wrap:wrap; }
+      .row.space{ justify-content:space-between; }
+      .input{
+        width:100%;
+        padding:11px 12px;
+        border-radius: 12px;
+        border: 1px solid rgba(255,255,255,.12);
+        background: rgba(11,16,32,.35);
+        color: var(--text);
+        outline:none;
+      }
+      .chips{ display:flex; gap:8px; flex-wrap:wrap; }
+      .chip{
+        padding:8px 10px;
+        border-radius: 999px;
+        border:1px solid rgba(255,255,255,.12);
+        background: rgba(11,16,32,.30);
+        color: var(--muted);
+        font-size:12px;
+        cursor:pointer;
+        user-select:none;
+      }
+      .chip.on{
+        border-color: rgba(91,140,255,.55);
+        background: rgba(91,140,255,.16);
+        color: var(--text);
+      }
+      .list{ display:flex; flex-direction:column; gap:10px; }
+      .item{
+        border: 1px solid rgba(255,255,255,.10);
+        background: rgba(11,16,32,.30);
+        border-radius: 14px;
+        padding:12px;
+      }
+      .item .name{ font-weight:760; }
+      .item .meta{ margin-top:6px; display:flex; gap:10px; flex-wrap:wrap; }
+      .tag{
+        font-size:12px;
+        color:var(--muted);
+        padding:6px 8px;
+        border-radius:999px;
+        border:1px solid rgba(255,255,255,.10);
+        background: rgba(18,26,51,.40);
+      }
+      .tag.good{ color: rgba(61,220,151,.95); border-color: rgba(61,220,151,.25); }
+      .tag.warn{ color: rgba(255,176,32,.95); border-color: rgba(255,176,32,.25); }
+      .tag.bad{ color: rgba(255,91,122,.95); border-color: rgba(255,91,122,.25); }
+      .divider{ height:1px; background: rgba(255,255,255,.08); margin:12px 0; }
+      .hintBox{
+        border:1px dashed rgba(255,255,255,.18);
+        background: rgba(11,16,32,.22);
+        border-radius: 14px;
+        padding:12px;
+        color: var(--muted);
+        font-size:13px;
+        line-height:1.55;
+      }
+      .chart{
+        width:100%;
+        height:220px;
+        border-radius: 16px;
+        border:1px solid rgba(255,255,255,.10);
+        background: radial-gradient(600px 260px at 30% 0%, rgba(91,140,255,.18), transparent 55%),
+                    rgba(11,16,32,.28);
+        overflow:hidden;
+      }
+      .chart svg{ width:100%; height:100%; display:block; }
+      table{ width:100%; border-collapse:separate; border-spacing:0; overflow:hidden; }
+      th,td{
+        text-align:left;
+        padding:10px 10px;
+        border-bottom:1px solid rgba(255,255,255,.08);
+        font-size:13px;
+      }
+      th{ color:var(--muted); font-weight:650; }
+      tr:last-child td{ border-bottom:none; }
+      .footerNote{
+        margin-top:14px;
+        padding:12px 14px;
+        border:1px solid rgba(255,255,255,.10);
+        border-radius: 14px;
+        background: rgba(11,16,32,.25);
+        color: var(--muted);
+        font-size:12px;
+        line-height:1.6;
+      }
+      /* Modal */
+      .overlay{
+        position:fixed; inset:0; z-index:60;
+        background: rgba(0,0,0,.55);
+        display:none;
+        align-items:center;
+        justify-content:center;
+        padding:20px;
+      }
+      .overlay.show{ display:flex; }
+      .modal{
+        width:min(720px, 96vw);
+        border-radius: 18px;
+        border:1px solid rgba(255,255,255,.12);
+        background: linear-gradient(180deg, rgba(18,26,51,.92), rgba(15,23,48,.92));
+        box-shadow: 0 22px 70px rgba(0,0,0,.55);
+        overflow:hidden;
+      }
+      .modal .hd{ padding:14px 14px 10px; border-bottom:1px solid rgba(255,255,255,.08); display:flex; justify-content:space-between; align-items:center; }
+      .modal .bd{ padding:14px; }
+      .mono{ font-family: ui-monospace, SFMono-Regular, Menlo, Monaco, Consolas, "Liberation Mono", "Courier New", monospace; }
+      .small{ font-size:12px; }
+    </style>
+  </head>
+  <body>
+    <div class="topbar">
+      <div class="wrap">
+        <div class="logo">
+          <div class="mark" aria-hidden="true"></div>
+          <div>
+            <h1>豪斯助手 <span class="muted">Demo</span></h1>
+            <div class="sub">本地房价趋势与小区对比工具（静态样例）</div>
+          </div>
+        </div>
+
+        <div class="nav" role="tablist" aria-label="页面导航">
+          <div class="pill active" data-route="region">城市/片区</div>
+          <div class="pill" data-route="trend">价格走势</div>
+          <div class="pill" data-route="list">小区列表</div>
+          <div class="pill" data-route="detail">小区详情</div>
+          <div class="pill" data-route="compare">小区对比</div>
+        </div>
+
+        <div class="right">
+          <div class="badge" id="userBadge">身份：<strong>游客</strong></div>
+          <button class="btn ghost" id="btnLogin">登录</button>
+          <button class="btn primary" id="btnVip">开通 VIP</button>
+        </div>
+      </div>
+    </div>
+
+    <div class="wrap">
+      <div class="grid">
+        <!-- Left: context + compare tray -->
+        <div class="card">
+          <div class="hd">
+            <div class="title">当前上下文</div>
+            <button class="btn ghost" id="btnReset">重置演示</button>
+          </div>
+          <div class="bd">
+            <div class="kpi">
+              <div class="k">
+                <div class="lab">城市</div>
+                <div class="val" id="kCity">-</div>
+                <div class="hint" id="kCityHint">请选择城市/片区</div>
+              </div>
+              <div class="k">
+                <div class="lab">片区</div>
+                <div class="val" id="kRegion">-</div>
+                <div class="hint">用于筛选与对比</div>
+              </div>
+              <div class="k">
+                <div class="lab">时间范围</div>
+                <div class="val" id="kRange">12月</div>
+                <div class="hint">3/6/12月/3年</div>
+              </div>
+              <div class="k">
+                <div class="lab">对比中</div>
+                <div class="val"><span id="kCompareCount">0</span>/5</div>
+                <div class="hint" id="kCompareHint">游客默认最多对比 2 个</div>
+              </div>
+            </div>
+
+            <div class="divider"></div>
+            <div class="row space">
+              <div class="muted">对比篮</div>
+              <button class="btn ghost" id="btnGoCompare">去对比页</button>
+            </div>
+            <div class="list" id="compareTray" style="margin-top:10px"></div>
+
+            <div class="divider"></div>
+            <div class="hintBox">
+              <div style="font-weight:700; color:var(--text); margin-bottom:6px;">口径说明（Demo）</div>
+              <div>本页面仅展示 PRD 的信息架构与交互样例；数据为模拟值，不构成任何投资或买卖建议。</div>
+              <div class="small" style="margin-top:6px;">建议在真实产品中固定展示：数据维度（挂牌/成交）、更新时间、来源与纠错入口。</div>
+            </div>
+          </div>
+        </div>
+
+        <!-- Right: pages -->
+        <div id="pages">
+          <!-- Region -->
+          <div class="card page" data-page="region">
+            <div class="hd">
+              <div class="title">城市与区域选择</div>
+              <div class="muted small">支持搜索、最近使用、热门片区</div>
+            </div>
+            <div class="bd">
+              <div class="row" style="margin-bottom:10px;">
+                <input class="input" id="searchRegion" placeholder="搜索城市/片区，例如：上海 浦东" />
+              </div>
+              <div class="row" style="margin-bottom:10px;">
+                <div class="muted">最近使用</div>
+              </div>
+              <div class="chips" id="recentChips"></div>
+
+              <div class="divider"></div>
+              <div class="row" style="margin-bottom:10px;">
+                <div class="muted">热门片区</div>
+              </div>
+              <div class="chips" id="hotChips"></div>
+
+              <div class="divider"></div>
+              <div class="row space">
+                <div class="muted">全部片区（按城市）</div>
+                <button class="btn primary" id="btnEnter">确认进入</button>
+              </div>
+              <div style="margin-top:10px;" id="allRegions"></div>
+              <div class="footerNote">
+                首次进入若无定位权限：提示手动选择城市，不阻塞使用（Demo 中用搜索/热门入口模拟）。
+              </div>
+            </div>
+          </div>
+
+          <!-- Trend -->
+          <div class="card page" data-page="trend" style="display:none;">
+            <div class="hd">
+              <div class="title">价格走势首页</div>
+              <div class="muted small">本地整体走势 + 片区对比 + 解释区</div>
+            </div>
+            <div class="bd">
+              <div class="row space">
+                <div>
+                  <div style="font-weight:760" id="trendTitle">-</div>
+                  <div class="muted small" id="trendMeta">请选择城市/片区</div>
+                </div>
+                <div class="row">
+                  <button class="btn ghost rangeBtn" data-range="3">3月</button>
+                  <button class="btn ghost rangeBtn" data-range="6">6月</button>
+                  <button class="btn ghost rangeBtn activeRange" data-range="12">12月</button>
+                  <button class="btn ghost rangeBtn" data-range="36">3年</button>
+                </div>
+              </div>
+
+              <div style="margin-top:12px;" class="chart" id="chartCity"></div>
+
+              <div class="divider"></div>
+              <div class="row space">
+                <div class="muted">片区对比（示意）</div>
+                <button class="btn" id="btnToList">去小区列表</button>
+              </div>
+              <div style="margin-top:10px;" class="chart" id="chartRegion"></div>
+
+              <div class="divider"></div>
+              <div class="hintBox" id="trendExplain">
+                解释区：每条趋势配文字解释，例如“近 3 月缓慢上行、波动较小”。（本 demo 会根据模拟数据生成说明）
+              </div>
+
+              <div class="footerNote">
+                <div><strong>数据口径说明（建议必备）</strong></div>
+                <div>维度：均价（示意）。更新时间：<span class="mono" id="dataUpdatedAt">2026-06-16</span>。口径：挂牌均价（示意）。</div>
+                <div class="small">数据不足时：应展示可用区间并标注“历史不足”。（本 demo 会随机生成一条“历史不足”提示）</div>
+              </div>
+            </div>
+          </div>
+
+          <!-- List -->
+          <div class="card page" data-page="list" style="display:none;">
+            <div class="hd">
+              <div class="title">小区列表与筛选</div>
+              <div class="muted small">列表直接呈现关键对比字段 + 加入对比/收藏</div>
+            </div>
+            <div class="bd">
+              <div class="row space">
+                <div class="row" style="gap:8px;">
+                  <div class="muted small">筛选</div>
+                  <div class="chips" id="filterChips"></div>
+                </div>
+                <div class="row">
+                  <div class="muted small">排序</div>
+                  <select class="input" id="sortSel" style="width:auto; min-width:160px;">
+                    <option value="price_desc">均价（高→低）</option>
+                    <option value="price_asc">均价（低→高）</option>
+                    <option value="chg_desc">近6月涨跌（高→低）</option>
+                    <option value="vol_asc">波动（低→高）</option>
+                    <option value="score_desc">评分（高→低）</option>
+                  </select>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+              <div class="list" id="estateList"></div>
+              <div class="footerNote">
+                规则示例：加入对比上限 5 个；超过上限给出“替换”选择（本 demo 用弹窗提示模拟）。
+              </div>
+            </div>
+          </div>
+
+          <!-- Detail -->
+          <div class="card page" data-page="detail" style="display:none;">
+            <div class="hd">
+              <div class="title">小区详情页</div>
+              <div class="muted small">走势 + 量化指标 + 居住评价 + 周边环境</div>
+            </div>
+            <div class="bd">
+              <div class="row space">
+                <div>
+                  <div style="font-weight:800; font-size:18px;" id="detailName">-</div>
+                  <div class="muted small" id="detailMeta">-</div>
+                </div>
+                <div class="row">
+                  <button class="btn" id="btnDetailFav">收藏</button>
+                  <button class="btn" id="btnDetailSub">订阅</button>
+                  <button class="btn good" id="btnDetailAddCompare">加入对比</button>
+                </div>
+              </div>
+
+              <div class="divider"></div>
+              <div class="kpi">
+                <div class="k"><div class="lab">当前均价</div><div class="val" id="dPrice">-</div><div class="hint muted">元/㎡（示意）</div></div>
+                <div class="k"><div class="lab">近6月涨跌</div><div class="val" id="dChg">-</div><div class="hint muted">涨跌幅（示意）</div></div>
+                <div class="k"><div class="lab">波动</div><div class="val" id="dVol">-</div><div class="hint muted">高/中/低（示意）</div></div>
+                <div class="k"><div class="lab">综合评价</div><div class="val" id="dScore">-</div><div class="hint muted">0–10（示意）</div></div>
+              </div>
+
+              <div style="margin-top:12px;" class="chart" id="chartDetail"></div>
+
+              <div class="divider"></div>
+              <div class="row space">
+                <div class="muted">走势量化（解释性指标）</div>
+                <button class="btn primary" id="btnDetailVip">解锁深度拆解（VIP）</button>
+              </div>
+              <div style="margin-top:10px;">
+                <table id="quantTable"></table>
+              </div>
+
+              <div class="divider"></div>
+              <div class="row"><div class="muted">居住评价（结构化维度）</div></div>
+              <div style="margin-top:10px;" id="reviewBlock"></div>
+
+              <div class="divider"></div>
+              <div class="row"><div class="muted">周边环境（标签 + 配套要点）</div></div>
+              <div style="margin-top:10px;" class="chips" id="envTags"></div>
+              <div class="footerNote">
+                边界：评价缺失时展示空态并引导用户反馈；数据争议提供“纠错/补充”入口（本 demo 用按钮提示模拟）。
+              </div>
+            </div>
+          </div>
+
+          <!-- Compare -->
+          <div class="card page" data-page="compare" style="display:none;">
+            <div class="hd">
+              <div class="title">小区对比页</div>
+              <div class="muted small">2–5 个小区横向对比 + 差异总结 + 分享</div>
+            </div>
+            <div class="bd">
+              <div class="row space">
+                <div class="muted">对比对象（最多 5 个）</div>
+                <div class="row">
+                  <button class="btn" id="btnShare">生成分享链接</button>
+                  <button class="btn primary" id="btnExport">导出图片（示意）</button>
+                </div>
+              </div>
+
+              <div style="margin-top:10px;" class="chips" id="compareChips"></div>
+
+              <div class="divider"></div>
+              <div class="row"><div class="muted">价格走势叠加（示意）</div></div>
+              <div style="margin-top:10px;" class="chart" id="chartCompare"></div>
+
+              <div class="divider"></div>
+              <div class="row"><div class="muted">关键指标对照</div></div>
+              <div style="margin-top:10px;">
+                <table id="compareTable"></table>
+              </div>
+
+              <div class="divider"></div>
+              <div class="row"><div class="muted">评价维度对照（表格示意）</div></div>
+              <div style="margin-top:10px;">
+                <table id="compareReviewTable"></table>
+              </div>
+
+              <div class="divider"></div>
+              <div class="hintBox" id="compareSummary">
+                差异总结：将基于已展示指标输出“对比结论句式”，不做预测。
+              </div>
+
+              <div class="footerNote">
+                游客默认限制：基础对比（2 个小区）。登录后可保存历史；VIP 可解锁更长历史区间、更多对比数、导出等（本 demo 以开关模拟）。
+              </div>
+            </div>
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <!-- Modal -->
+    <div class="overlay" id="overlay">
+      <div class="modal" role="dialog" aria-modal="true" aria-label="弹窗">
+        <div class="hd">
+          <div class="title" id="modalTitle">提示</div>
+          <button class="btn ghost" id="modalClose">关闭</button>
+        </div>
+        <div class="bd" id="modalBody"></div>
+      </div>
+    </div>
+
+    <script>
+      // ====== Mock Data (示意) ======
+      const DATA = {
+        regions: [
+          { city:"上海", list:["浦东", "徐汇", "闵行", "杨浦", "宝山"] },
+          { city:"北京", list:["朝阳", "海淀", "丰台", "通州", "昌平"] },
+          { city:"深圳", list:["南山", "福田", "宝安", "龙华", "龙岗"] },
+        ],
+        hot: [
+          { city:"上海", region:"浦东" },
+          { city:"北京", region:"朝阳" },
+          { city:"深圳", region:"南山" },
+          { city:"上海", region:"徐汇" },
+          { city:"北京", region:"海淀" },
+        ],
+        estates: [
+          // Shanghai / Pudong
+          { id:"E1", city:"上海", region:"浦东", name:"海棠里", built:2005, metro:650, price: 86500, chg6m: +2.8, vol:"低", score:8.6,
+            reviews:{ 物业:8.2, 噪音:7.8, 停车:7.0, 采光:8.4, 通勤:8.8, 配套:8.6 },
+            env:["地铁近","商业成熟","公园","医疗","学区"]
+          },
+          { id:"E2", city:"上海", region:"浦东", name:"星河湾", built:2011, metro:520, price: 102000, chg6m: +1.1, vol:"中", score:8.1,
+            reviews:{ 物业:8.6, 噪音:7.1, 停车:7.8, 采光:8.0, 通勤:8.0, 配套:8.3 },
+            env:["地铁近","河景","商业","公园"]
+          },
+          { id:"E3", city:"上海", region:"浦东", name:"梧桐苑", built:1998, metro:980, price: 73500, chg6m: -1.9, vol:"高", score:7.3,
+            reviews:{ 物业:6.8, 噪音:6.4, 停车:6.2, 采光:7.6, 通勤:8.2, 配套:7.6 },
+            env:["老小区","公交多","菜场","学校"]
+          },
+          // Shanghai / Xuhui
+          { id:"E4", city:"上海", region:"徐汇", name:"康宁花园", built:2003, metro:420, price: 118000, chg6m: +0.6, vol:"低", score:8.8,
+            reviews:{ 物业:8.1, 噪音:7.9, 停车:6.8, 采光:8.2, 通勤:9.2, 配套:9.0 },
+            env:["地铁极近","商业成熟","三甲医院","公园"]
+          },
+          { id:"E5", city:"上海", region:"徐汇", name:"天际云庭", built:2016, metro:700, price: 135000, chg6m: +3.6, vol:"中", score:8.4,
+            reviews:{ 物业:8.7, 噪音:7.3, 停车:7.4, 采光:8.6, 通勤:8.8, 配套:8.8 },
+            env:["次新房","商业","公园","地铁"]
+          },
+          // Beijing / Chaoyang
+          { id:"E6", city:"北京", region:"朝阳", name:"望京府", built:2008, metro:600, price: 98000, chg6m: +0.8, vol:"中", score:8.2,
+            reviews:{ 物业:8.0, 噪音:7.2, 停车:7.3, 采光:7.9, 通勤:8.5, 配套:8.4 },
+            env:["地铁近","商业","公园","学区"]
+          },
+          { id:"E7", city:"北京", region:"朝阳", name:"国贸雅居", built:2000, metro:380, price: 142000, chg6m: -0.4, vol:"高", score:7.9,
+            reviews:{ 物业:7.2, 噪音:6.3, 停车:6.6, 采光:7.6, 通勤:9.1, 配套:9.2 },
+            env:["地铁极近","核心区","商业成熟","医疗"]
+          },
+        ]
+      };
+
+      // ====== State ======
+      const state = {
+        route: "region",
+        user: { loggedIn:false, isVip:false },
+        selection: { city:null, region:null },
+        timeRange: 12, // months
+        recent: [],
+        favorites: new Set(),
+        subscriptions: new Set(),
+        compare: [], // estate ids
+        lastDetailId: null
+      };
+
+      // ====== Helpers ======
+      const $ = (sel, root=document) => root.querySelector(sel);
+      const $$ = (sel, root=document) => Array.from(root.querySelectorAll(sel));
+
+      function money(n){
+        if(n == null) return "-";
+        return n.toLocaleString("zh-CN");
+      }
+      function pct(n){
+        if(n == null || Number.isNaN(n)) return "-";
+        const s = (n > 0 ? "+" : "") + n.toFixed(1) + "%";
+        return s;
+      }
+      function colorByVol(vol){
+        if(vol === "低") return "good";
+        if(vol === "中") return "warn";
+        return "bad";
+      }
+      function clamp(v, min, max){ return Math.max(min, Math.min(max, v)); }
+
+      function toast(title, html){
+        $("#modalTitle").textContent = title || "提示";
+        $("#modalBody").innerHTML = html || "";
+        $("#overlay").classList.add("show");
+      }
+      function closeToast(){ $("#overlay").classList.remove("show"); }
+
+      // ====== Routing ======
+      function setRoute(route){
+        state.route = route;
+        $$(".pill").forEach(p => p.classList.toggle("active", p.dataset.route === route));
+        $$(".page").forEach(p => p.style.display = (p.dataset.page === route) ? "" : "none");
+
+        // Page init
+        if(route === "trend") renderTrend();
+        if(route === "list") renderList();
+        if(route === "detail") renderDetail();
+        if(route === "compare") renderCompare();
+        syncContext();
+      }
+
+      // ====== UI Sync ======
+      function syncContext(){
+        $("#kCity").textContent = state.selection.city || "-";
+        $("#kRegion").textContent = state.selection.region || "-";
+        $("#kCityHint").textContent = state.selection.city ? "已选择" : "请选择城市/片区";
+        $("#kRange").textContent = state.timeRange >= 36 ? "3年" : (state.timeRange + "月");
+        $("#kCompareCount").textContent = String(state.compare.length);
+        $("#kCompareHint").textContent = state.user.isVip ? "VIP 最多对比 5 个" : (state.user.loggedIn ? "登录用户最多对比 3 个（示意）" : "游客默认最多对比 2 个");
+
+        $("#userBadge").innerHTML = state.user.isVip
+          ? '身份：<strong>VIP</strong>'
+          : (state.user.loggedIn ? '身份：<strong>注册用户</strong>' : '身份：<strong>游客</strong>');
+
+        $("#btnLogin").textContent = state.user.loggedIn ? "退出登录" : "登录";
+        $("#btnVip").textContent = state.user.isVip ? "已开通 VIP" : "开通 VIP";
+        $("#btnVip").classList.toggle("primary", !state.user.isVip);
+        $("#btnVip").disabled = state.user.isVip;
+
+        renderCompareTray();
+      }
+
+      function maxCompare(){
+        if(state.user.isVip) return 5;
+        if(state.user.loggedIn) return 3;
+        return 2;
+      }
+
+      function renderCompareTray(){
+        const tray = $("#compareTray");
+        tray.innerHTML = "";
+        if(state.compare.length === 0){
+          tray.innerHTML = `<div class="hintBox">还没有加入对比的小区。你可以从「小区列表」或「小区详情」加入。</div>`;
+          return;
+        }
+        state.compare.map(id => DATA.estates.find(e => e.id === id)).filter(Boolean).forEach(e => {
+          const div = document.createElement("div");
+          div.className = "item";
+          div.innerHTML = `
+            <div class="row space">
+              <div>
+                <div class="name">${e.name}</div>
+                <div class="muted small">${e.city} · ${e.region} · ${e.built}年 · 距地铁${e.metro}m</div>
+              </div>
+              <button class="btn ghost" data-remove="${e.id}">移除</button>
+            </div>
+            <div class="meta">
+              <span class="tag">均价 ${money(e.price)}</span>
+              <span class="tag ${colorByVol(e.vol)}">波动 ${e.vol}</span>
+              <span class="tag">近6月 ${pct(e.chg6m)}</span>
+              <span class="tag">评分 ${e.score.toFixed(1)}</span>
+            </div>
+          `;
+          tray.appendChild(div);
+        });
+        $$("[data-remove]", tray).forEach(btn => btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-remove");
+          state.compare = state.compare.filter(x => x !== id);
+          syncContext();
+          if(state.route === "compare") renderCompare();
+        }));
+      }
+
+      // ====== Region Page ======
+      function renderRegion(){
+        // recents
+        const recentWrap = $("#recentChips");
+        recentWrap.innerHTML = "";
+        const rec = state.recent.slice(0, 6);
+        if(rec.length === 0){
+          recentWrap.innerHTML = `<span class="muted small">暂无（选择一次后会记录）</span>`;
+        }else{
+          rec.forEach(r => {
+            const c = document.createElement("div");
+            c.className = "chip";
+            c.textContent = `${r.city} · ${r.region}`;
+            c.addEventListener("click", () => selectRegion(r.city, r.region, true));
+            recentWrap.appendChild(c);
+          });
+        }
+
+        // hot
+        const hotWrap = $("#hotChips");
+        hotWrap.innerHTML = "";
+        DATA.hot.forEach(r => {
+          const c = document.createElement("div");
+          c.className = "chip";
+          c.textContent = `${r.city} · ${r.region}`;
+          c.addEventListener("click", () => selectRegion(r.city, r.region, true));
+          hotWrap.appendChild(c);
+        });
+
+        // all regions
+        const all = $("#allRegions");
+        all.innerHTML = "";
+        DATA.regions.forEach(group => {
+          const card = document.createElement("div");
+          card.className = "item";
+          card.innerHTML = `
+            <div class="row space">
+              <div class="name">${group.city}</div>
+              <span class="muted small">${group.list.length} 个片区</span>
+            </div>
+            <div class="chips" style="margin-top:10px;">
+              ${group.list.map(r => `<div class="chip" data-city="${group.city}" data-region="${r}">${r}</div>`).join("")}
+            </div>
+          `;
+          all.appendChild(card);
+        });
+
+        $$("[data-city][data-region]", all).forEach(chip => {
+          chip.addEventListener("click", () => selectRegion(chip.dataset.city, chip.dataset.region, true));
+        });
+      }
+
+      function selectRegion(city, region, addRecent){
+        state.selection.city = city;
+        state.selection.region = region;
+        if(addRecent){
+          state.recent = [{city, region}, ...state.recent.filter(x => !(x.city===city && x.region===region))];
+        }
+        syncContext();
+      }
+
+      function handleSearchRegion(){
+        const q = $("#searchRegion").value.trim();
+        if(!q){
+          renderRegion();
+          return;
+        }
+        const low = q.toLowerCase();
+        const matches = [];
+        DATA.regions.forEach(g => {
+          if(g.city.toLowerCase().includes(low)) g.list.forEach(r => matches.push({city:g.city, region:r}));
+          g.list.forEach(r => {
+            if((g.city + " " + r).toLowerCase().includes(low) || r.toLowerCase().includes(low)){
+              matches.push({city:g.city, region:r});
+            }
+          });
+        });
+        const unique = [];
+        matches.forEach(m => {
+          if(!unique.find(x => x.city===m.city && x.region===m.region)) unique.push(m);
+        });
+
+        const all = $("#allRegions");
+        all.innerHTML = "";
+        if(unique.length === 0){
+          all.innerHTML = `<div class="hintBox">没有找到相关城市/片区。换个关键词试试。</div>`;
+          return;
+        }
+        const box = document.createElement("div");
+        box.className = "item";
+        box.innerHTML = `
+          <div class="row space">
+            <div class="name">搜索结果</div>
+            <span class="muted small">${unique.length} 条</span>
+          </div>
+          <div class="chips" style="margin-top:10px;">
+            ${unique.map(m => `<div class="chip" data-city="${m.city}" data-region="${m.region}">${m.city} · ${m.region}</div>`).join("")}
+          </div>
+        `;
+        all.appendChild(box);
+        $$("[data-city][data-region]", box).forEach(chip => chip.addEventListener("click", () => selectRegion(chip.dataset.city, chip.dataset.region, true)));
+      }
+
+      // ====== Charts (Simple SVG) ======
+      function buildLineSVG(series, opts={}){
+        const W = 820, H = 220, pad = 20;
+        const min = Math.min(...series), max = Math.max(...series);
+        const span = (max - min) || 1;
+        const points = series.map((v, i) => {
+          const x = pad + (i * (W - pad*2) / (series.length - 1));
+          const y = pad + ((max - v) * (H - pad*2) / span);
+          return [x, y];
+        });
+        const d = points.map((p,i)=> (i===0? "M":"L") + p[0].toFixed(2)+","+p[1].toFixed(2)).join(" ");
+        const stroke = opts.stroke || "rgba(91,140,255,.95)";
+        const fill = opts.fill || "rgba(91,140,255,.10)";
+        return `
+          <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+            <defs>
+              <linearGradient id="gFill" x1="0" y1="0" x2="0" y2="1">
+                <stop offset="0%" stop-color="${fill}" />
+                <stop offset="100%" stop-color="rgba(91,140,255,0)" />
+              </linearGradient>
+            </defs>
+            <rect x="0" y="0" width="${W}" height="${H}" fill="transparent"/>
+            ${[0.25,0.5,0.75].map(t=>`<line x1="${pad}" y1="${(pad + (H-pad*2)*t).toFixed(2)}" x2="${W-pad}" y2="${(pad + (H-pad*2)*t).toFixed(2)}" stroke="rgba(255,255,255,.06)" />`).join("")}
+            <path d="${d} L ${W-pad} ${H-pad} L ${pad} ${H-pad} Z" fill="url(#gFill)" />
+            <path d="${d}" fill="none" stroke="${stroke}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round"/>
+            <circle cx="${points[points.length-1][0].toFixed(2)}" cy="${points[points.length-1][1].toFixed(2)}" r="4.5" fill="${stroke}" />
+          </svg>
+        `;
+      }
+
+      function buildMultiLineSVG(lines){
+        const W = 820, H = 220, pad = 20;
+        const all = lines.flatMap(l => l.series);
+        const min = Math.min(...all), max = Math.max(...all);
+        const span = (max - min) || 1;
+        const svgLines = lines.map((line, idx) => {
+          const points = line.series.map((v, i) => {
+            const x = pad + (i * (W - pad*2) / (line.series.length - 1));
+            const y = pad + ((max - v) * (H - pad*2) / span);
+            return [x, y];
+          });
+          const d = points.map((p,i)=> (i===0? "M":"L") + p[0].toFixed(2)+","+p[1].toFixed(2)).join(" ");
+          const stroke = line.stroke || ["rgba(91,140,255,.95)","rgba(139,91,255,.90)","rgba(61,220,151,.92)","rgba(255,176,32,.92)","rgba(255,91,122,.92)"][idx%5];
+          return `<path d="${d}" fill="none" stroke="${stroke}" stroke-width="3" stroke-linecap="round" stroke-linejoin="round" />`;
+        }).join("");
+
+        const legend = lines.map((l, idx) => {
+          const c = l.stroke || ["rgba(91,140,255,.95)","rgba(139,91,255,.90)","rgba(61,220,151,.92)","rgba(255,176,32,.92)","rgba(255,91,122,.92)"][idx%5];
+          return `<g transform="translate(${pad + idx*150}, ${pad})">
+            <rect x="0" y="0" width="10" height="10" rx="3" fill="${c}" />
+            <text x="16" y="10" font-size="12" fill="rgba(255,255,255,.78)">${escapeHtml(l.name)}</text>
+          </g>`;
+        }).join("");
+
+        return `
+          <svg viewBox="0 0 ${W} ${H}" preserveAspectRatio="none">
+            <rect x="0" y="0" width="${W}" height="${H}" fill="transparent"/>
+            ${[0.25,0.5,0.75].map(t=>`<line x1="${pad}" y1="${(pad + (H-pad*2)*t).toFixed(2)}" x2="${W-pad}" y2="${(pad + (H-pad*2)*t).toFixed(2)}" stroke="rgba(255,255,255,.06)" />`).join("")}
+            ${svgLines}
+            ${legend}
+          </svg>
+        `;
+      }
+
+      function escapeHtml(s){
+        return String(s).replaceAll("&","&amp;").replaceAll("<","&lt;").replaceAll(">","&gt;").replaceAll('"',"&quot;").replaceAll("'","&#039;");
+      }
+
+      function genSeries(base, months){
+        // 生成一个可读的“走势”：随机波动 + 小趋势
+        const n = months;
+        let v = base;
+        const trend = (Math.random() * 0.6 - 0.25); // -0.25% ~ +0.35% per step
+        const s = [];
+        for(let i=0;i<n;i++){
+          const noise = (Math.random()*1.4 - 0.7); // -0.7% ~ +0.7%
+          v = v * (1 + (trend + noise) / 100);
+          s.push(Math.round(v));
+        }
+        return s;
+      }
+
+      function analyzeTrend(series){
+        const start = series[0], end = series[series.length-1];
+        const chg = (end - start) / start * 100;
+        const diffs = series.slice(1).map((v,i)=> v - series[i]);
+        const abs = diffs.map(d=>Math.abs(d));
+        const vol = abs.reduce((a,b)=>a+b,0) / abs.length / start * 100; // rough
+        const slope = diffs.reduce((a,b)=>a+b,0) / diffs.length;
+        return { chg, vol, slope, start, end, high: Math.max(...series), low: Math.min(...series) };
+      }
+
+      function trendText(ana, months){
+        const dir = ana.chg > 0.6 ? "上行" : (ana.chg < -0.6 ? "回调" : "震荡");
+        const vol = ana.vol < 0.25 ? "波动较小" : (ana.vol < 0.55 ? "波动中等" : "波动较大");
+        const pace = Math.abs(ana.slope) < 40 ? "变化缓慢" : "变化较快";
+        const rangeLabel = months >= 36 ? "近 3 年" : `近 ${months} 月`;
+        return `${rangeLabel}整体呈${dir}（${pace}），${vol}；区间高点约 ${money(ana.high)}，低点约 ${money(ana.low)}。`;
+      }
+
+      // ====== Trend Page ======
+      function renderTrend(){
+        if(!state.selection.city){
+          $("#trendTitle").textContent = "未选择城市/片区";
+          $("#trendMeta").textContent = "请先在「城市/片区」选择";
+          $("#chartCity").innerHTML = `<div class="hintBox" style="margin:14px;">请选择城市/片区后再查看走势。</div>`;
+          $("#chartRegion").innerHTML = `<div class="hintBox" style="margin:14px;">片区对比需要城市/片区上下文。</div>`;
+          $("#trendExplain").textContent = "解释区：选择后自动生成。";
+          return;
+        }
+        const city = state.selection.city;
+        const region = state.selection.region;
+        const months = state.timeRange;
+        $("#trendTitle").textContent = `${city} · ${region} 走势概览（示意）`;
+        $("#trendMeta").textContent = `默认展示近 12 个月；可切换时间范围。`;
+
+        // city trend
+        const base = 80000 + (city === "北京" ? 14000 : (city === "深圳" ? 9000 : 0));
+        const citySeries = genSeries(base, Math.min(months, 36));
+        const aCity = analyzeTrend(citySeries);
+        $("#chartCity").innerHTML = buildLineSVG(citySeries, { stroke:"rgba(91,140,255,.95)", fill:"rgba(91,140,255,.16)" });
+
+        // region compare (3-4 lines)
+        const regionNames = pickRegionsForCompare(city, region);
+        const lines = regionNames.map((r, i) => {
+          const bump = (i - 1) * (3000 + Math.random()*2000);
+          return { name:r, series: genSeries(base + bump, Math.min(months, 24)) };
+        });
+        $("#chartRegion").innerHTML = buildMultiLineSVG(lines);
+
+        // explain + data 부족提示
+        const maybeShort = Math.random() < 0.22;
+        const lack = maybeShort ? "提示：该片区历史数据不足，已展示可用区间并标注“历史不足”。\n" : "";
+        $("#trendExplain").textContent = lack + trendText(aCity, months);
+      }
+
+      function pickRegionsForCompare(city, selectedRegion){
+        const group = DATA.regions.find(r => r.city === city);
+        if(!group) return [selectedRegion];
+        const pool = group.list.filter(x => x !== selectedRegion);
+        const pick = shuffle(pool).slice(0, 3);
+        return [selectedRegion, ...pick];
+      }
+
+      function shuffle(arr){
+        const a = [...arr];
+        for(let i=a.length-1;i>0;i--){
+          const j = Math.floor(Math.random()*(i+1));
+          [a[i], a[j]] = [a[j], a[i]];
+        }
+        return a;
+      }
+
+      // ====== List Page ======
+      const FILTERS = [
+        { key:"price", label:"均价≤90k", fn:(e)=> e.price <= 90000 },
+        { key:"built", label:"2005后", fn:(e)=> e.built >= 2005 },
+        { key:"metro", label:"地铁≤700m", fn:(e)=> e.metro <= 700 },
+        { key:"score", label:"评分≥8.2", fn:(e)=> e.score >= 8.2 },
+      ];
+      const listState = { filters: new Set() };
+
+      function renderList(){
+        // filters
+        const fc = $("#filterChips");
+        fc.innerHTML = "";
+        FILTERS.forEach(f => {
+          const c = document.createElement("div");
+          c.className = "chip " + (listState.filters.has(f.key) ? "on" : "");
+          c.textContent = f.label;
+          c.addEventListener("click", () => {
+            if(listState.filters.has(f.key)) listState.filters.delete(f.key);
+            else listState.filters.add(f.key);
+            renderList();
+          });
+          fc.appendChild(c);
+        });
+
+        let estates = DATA.estates.slice();
+        if(state.selection.city) estates = estates.filter(e => e.city === state.selection.city);
+        if(state.selection.region) estates = estates.filter(e => e.region === state.selection.region);
+        listState.filters.forEach(k => {
+          const f = FILTERS.find(x => x.key === k);
+          if(f) estates = estates.filter(f.fn);
+        });
+
+        // sort
+        const sort = $("#sortSel").value;
+        estates.sort((a,b) => {
+          const map = {
+            price_desc: (x,y)=> y.price - x.price,
+            price_asc: (x,y)=> x.price - y.price,
+            chg_desc: (x,y)=> y.chg6m - x.chg6m,
+            vol_asc: (x,y)=> ({低:1,中:2,高:3}[x.vol] - ({低:1,中:2,高:3}[y.vol])),
+            score_desc: (x,y)=> y.score - x.score
+          };
+          return (map[sort] || map.price_desc)(a,b);
+        });
+
+        const list = $("#estateList");
+        list.innerHTML = "";
+        if(!state.selection.city){
+          list.innerHTML = `<div class="hintBox">未选择片区。你仍可浏览示例数据，但建议先选择城市/片区以符合 PRD 流程。</div>`;
+        }
+        if(estates.length === 0){
+          list.innerHTML += `<div class="hintBox">暂无符合条件的小区。尝试取消筛选或切换片区。</div>`;
+          return;
+        }
+
+        estates.forEach(e => {
+          const div = document.createElement("div");
+          div.className = "item";
+          const inCompare = state.compare.includes(e.id);
+          const fav = state.favorites.has(e.id);
+          div.innerHTML = `
+            <div class="row space">
+              <div>
+                <div class="name">${e.name}</div>
+                <div class="muted small">${e.city} · ${e.region} · ${e.built}年 · 距地铁${e.metro}m</div>
+              </div>
+              <div class="row">
+                <button class="btn ghost" data-open="${e.id}">查看详情</button>
+              </div>
+            </div>
+            <div class="meta">
+              <span class="tag">均价 ${money(e.price)}</span>
+              <span class="tag">近6月 ${pct(e.chg6m)}</span>
+              <span class="tag ${colorByVol(e.vol)}">波动 ${e.vol}</span>
+              <span class="tag">评价 ${e.score.toFixed(1)}</span>
+            </div>
+            <div class="row" style="margin-top:10px;">
+              <button class="btn good" data-compare="${e.id}">${inCompare ? "已在对比" : "加入对比"}</button>
+              <button class="btn" data-fav="${e.id}">${fav ? "已收藏" : "收藏"}</button>
+            </div>
+          `;
+          list.appendChild(div);
+        });
+
+        $$("[data-open]", list).forEach(btn => btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-open");
+          state.lastDetailId = id;
+          setRoute("detail");
+        }));
+        $$("[data-fav]", list).forEach(btn => btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-fav");
+          if(state.favorites.has(id)) state.favorites.delete(id);
+          else state.favorites.add(id);
+          syncContext(); renderList();
+        }));
+        $$("[data-compare]", list).forEach(btn => btn.addEventListener("click", () => {
+          const id = btn.getAttribute("data-compare");
+          addToCompare(id);
+          renderList();
+        }));
+      }
+
+      // ====== Detail Page ======
+      function renderDetail(){
+        const id = state.lastDetailId || state.compare[0] || (DATA.estates[0]?.id);
+        const e = DATA.estates.find(x => x.id === id);
+        if(!e){
+          $("#detailName").textContent = "未选择小区";
+          $("#detailMeta").textContent = "请从小区列表进入详情";
+          $("#chartDetail").innerHTML = `<div class="hintBox" style="margin:14px;">没有可展示的小区。</div>`;
+          return;
+        }
+        state.lastDetailId = e.id;
+
+        $("#detailName").textContent = e.name;
+        $("#detailMeta").textContent = `${e.city} · ${e.region} · ${e.built}年 · 距地铁${e.metro}m`;
+        $("#dPrice").textContent = money(e.price);
+        $("#dChg").textContent = pct(e.chg6m);
+        $("#dVol").textContent = e.vol;
+        $("#dScore").textContent = e.score.toFixed(1);
+
+        const series = genSeries(e.price * (0.96 + Math.random()*0.06), Math.min(state.timeRange, 24));
+        $("#chartDetail").innerHTML = buildLineSVG(series, { stroke:"rgba(139,91,255,.90)", fill:"rgba(139,91,255,.14)" });
+        const ana = analyzeTrend(series);
+
+        // quant table
+        const q = [
+          ["近 " + Math.min(state.timeRange,24) + " 月涨跌（示意）", pct(ana.chg)],
+          ["阶段高点（示意）", money(ana.high)],
+          ["阶段低点（示意）", money(ana.low)],
+          ["趋势斜率（示意）", (ana.slope>0? "上行":"回调") + " · " + (Math.abs(ana.slope) < 40 ? "缓慢" : "较快")],
+          ["波动率（示意）", ana.vol.toFixed(2) + "%（粗略）"],
+        ];
+        $("#quantTable").innerHTML = `
+          <thead><tr><th>指标</th><th>结果</th><th>解释</th></tr></thead>
+          <tbody>
+            ${q.map(([k,v]) => `<tr><td>${escapeHtml(k)}</td><td>${escapeHtml(v)}</td><td class="muted">仅做信息展示与解释，不做预测。</td></tr>`).join("")}
+          </tbody>
+        `;
+
+        // reviews
+        const keys = Object.keys(e.reviews || {});
+        const hasReviews = keys.length > 0 && Math.random() > 0.08; // 小概率模拟“缺失”
+        const reviewBlock = $("#reviewBlock");
+        if(!hasReviews){
+          reviewBlock.innerHTML = `
+            <div class="hintBox">
+              暂未收录该小区的居住评价。<br/>
+              <button class="btn" id="btnFeedback" style="margin-top:10px;">提交反馈（示意）</button>
+            </div>
+          `;
+          $("#btnFeedback")?.addEventListener("click", () => toast("提交反馈（示意）", `
+            <div class="muted">真实产品中可引导用户提交结构化反馈，并进入后台工单或审核流程。</div>
+          `));
+        }else{
+          const rows = keys.map(k => [k, e.reviews[k]]);
+          reviewBlock.innerHTML = `
+            <table>
+              <thead><tr><th>维度</th><th>分数</th><th>说明（示意）</th></tr></thead>
+              <tbody>
+                ${rows.map(([k,v]) => `
+                  <tr>
+                    <td>${escapeHtml(k)}</td>
+                    <td>${Number(v).toFixed(1)}</td>
+                    <td class="muted">${Number(v) >= 8.2 ? "体验较好" : (Number(v) >= 7.3 ? "中等偏上" : "需要重点关注")}</td>
+                  </tr>
+                `).join("")}
+              </tbody>
+            </table>
+            <div class="hintBox" style="margin-top:10px;">
+              典型评论（示意）：<br/>
+              1. “通勤方便，但停车偏紧张。”<br/>
+              2. “物业响应快，公共空间维护不错。”
+            </div>
+          `;
+        }
+
+        // env tags
+        const env = $("#envTags");
+        env.innerHTML = "";
+        (e.env || []).forEach(t => {
+          const c = document.createElement("div");
+          c.className = "chip on";
+          c.textContent = t;
+          env.appendChild(c);
+        });
+
+        // action buttons
+        $("#btnDetailFav").textContent = state.favorites.has(e.id) ? "已收藏" : "收藏";
+        $("#btnDetailFav").onclick = () => {
+          if(state.favorites.has(e.id)) state.favorites.delete(e.id);
+          else state.favorites.add(e.id);
+          syncContext(); renderDetail();
+        };
+        $("#btnDetailSub").textContent = state.subscriptions.has(e.id) ? "已订阅" : "订阅";
+        $("#btnDetailSub").onclick = () => {
+          if(!state.user.loggedIn){
+            toast("需要登录", `<div>订阅与提醒需要登录后使用（站内通知或邮件/短信）。</div><div class="muted small">PRD：订阅与提醒为可选/待确认项。</div>`);
+            return;
+          }
+          if(state.subscriptions.has(e.id)) state.subscriptions.delete(e.id);
+          else state.subscriptions.add(e.id);
+          toast("订阅（示意）", `<div>已${state.subscriptions.has(e.id) ? "订阅" : "取消订阅"}：${escapeHtml(e.name)}。</div><div class="muted small">真实产品中可配置阈值与通知方式。</div>`);
+          syncContext(); renderDetail();
+        };
+        $("#btnDetailAddCompare").onclick = () => addToCompare(e.id);
+
+        $("#btnDetailVip").onclick = () => {
+          if(state.user.isVip){
+            toast("深度拆解（示意）", `<div>VIP 可解锁更长历史区间、更细颗粒度指标拆解与报告导出。</div>`);
+          }else{
+            toast("开通 VIP", vipPayHTML());
+            bindVipPayButtons();
+          }
+        };
+      }
+
+      // ====== Compare Logic ======
+      function addToCompare(id){
+        const e = DATA.estates.find(x => x.id === id);
+        if(!e){ return; }
+        // 游客/登录/ VIP 上限
+        const max = maxCompare();
+        if(state.compare.includes(id)){
+          toast("已加入对比", `<div>${escapeHtml(e.name)} 已在对比篮。</div>`);
+          return;
+        }
+        if(state.compare.length >= max){
+          toast("对比数已达上限", `
+            <div>当前最多对比 <span class="mono">${max}</span> 个（${state.user.isVip ? "VIP" : (state.user.loggedIn ? "注册用户" : "游客")}）。</div>
+            <div class="divider"></div>
+            <div class="muted">你可以选择替换一个已有小区：</div>
+            <div class="chips" style="margin-top:10px;">
+              ${state.compare.map(cid => {
+                const ce = DATA.estates.find(x => x.id === cid);
+                return `<div class="chip" data-replace="${cid}">替换：${escapeHtml(ce?.name || cid)}</div>`;
+              }).join("")}
+            </div>
+            <div class="divider"></div>
+            <button class="btn good" id="btnUpgrade">${state.user.loggedIn ? "开通 VIP 提升上限" : "登录/开通 VIP"}</button>
+          `);
+          $$("[data-replace]").forEach(ch => ch.addEventListener("click", () => {
+            const rid = ch.getAttribute("data-replace");
+            state.compare = state.compare.filter(x => x !== rid);
+            state.compare.push(id);
+            closeToast();
+            syncContext();
+            if(state.route === "compare") renderCompare();
+          }));
+          $("#btnUpgrade")?.addEventListener("click", () => {
+            closeToast();
+            if(!state.user.loggedIn){
+              toggleLogin(true);
+            }else{
+              toast("开通 VIP", vipPayHTML());
+              bindVipPayButtons();
+            }
+          });
+          return;
+        }
+        state.compare.push(id);
+        syncContext();
+        if(state.route === "compare") renderCompare();
+      }
+
+      function renderCompare(){
+        const wrap = $("#compareChips");
+        wrap.innerHTML = "";
+        if(state.compare.length === 0){
+          wrap.innerHTML = `<div class="hintBox">还没有对比对象。你可以从小区列表/详情加入 2–5 个小区。</div>`;
+          $("#chartCompare").innerHTML = `<div class="hintBox" style="margin:14px;">暂无对比数据。</div>`;
+          $("#compareTable").innerHTML = "";
+          $("#compareReviewTable").innerHTML = "";
+          $("#compareSummary").textContent = "差异总结：暂无。";
+          return;
+        }
+
+        state.compare.map(id => DATA.estates.find(e => e.id === id)).filter(Boolean).forEach(e => {
+          const c = document.createElement("div");
+          c.className = "chip on";
+          c.textContent = e.name + " ×";
+          c.title = "点击移除";
+          c.addEventListener("click", () => {
+            state.compare = state.compare.filter(x => x !== e.id);
+            syncContext(); renderCompare();
+          });
+          wrap.appendChild(c);
+        });
+
+        // chart
+        const estates = state.compare.map(id => DATA.estates.find(e => e.id === id)).filter(Boolean);
+        const months = Math.min(state.timeRange, 24);
+        const lines = estates.map((e, idx) => ({
+          name: e.name,
+          series: genSeries(e.price * (0.96 + Math.random()*0.06), months)
+        }));
+        $("#chartCompare").innerHTML = buildMultiLineSVG(lines);
+
+        // key metrics table
+        $("#compareTable").innerHTML = `
+          <thead>
+            <tr>
+              <th>小区</th>
+              <th>均价</th>
+              <th>近6月涨跌</th>
+              <th>波动</th>
+              <th>建成年代</th>
+              <th>地铁距离</th>
+              <th>综合评价</th>
+            </tr>
+          </thead>
+          <tbody>
+            ${estates.map(e => `
+              <tr>
+                <td>${escapeHtml(e.name)}</td>
+                <td>${money(e.price)}</td>
+                <td>${pct(e.chg6m)}</td>
+                <td>${escapeHtml(e.vol)}</td>
+                <td>${e.built}</td>
+                <td>${e.metro}m</td>
+                <td>${e.score.toFixed(1)}</td>
+              </tr>
+            `).join("")}
+          </tbody>
+        `;
+
+        // review compare table: union keys
+        const dims = new Set();
+        estates.forEach(e => Object.keys(e.reviews || {}).forEach(k => dims.add(k)));
+        const dimList = Array.from(dims);
+        $("#compareReviewTable").innerHTML = `
+          <thead>
+            <tr>
+              <th>维度</th>
+              ${estates.map(e => `<th>${escapeHtml(e.name)}</th>`).join("")}
+            </tr>
+          </thead>
+          <tbody>
+            ${dimList.map(dim => `
+              <tr>
+                <td>${escapeHtml(dim)}</td>
+                ${estates.map(e => `<td>${(e.reviews?.[dim] != null) ? Number(e.reviews[dim]).toFixed(1) : '<span class="muted">缺少数据</span>'}</td>`).join("")}
+              </tr>
+            `).join("")}
+          </tbody>
+        `;
+
+        // summary rules (解释性句式，不预测)
+        $("#compareSummary").innerHTML = renderCompareSummary(estates);
+      }
+
+      function renderCompareSummary(estates){
+        if(estates.length < 2){
+          return "差异总结：至少需要 2 个小区。";
+        }
+        // pick two representative: highest price vs lowest vol, or first two
+        const byPrice = [...estates].sort((a,b)=>b.price-a.price);
+        const byVol = [...estates].sort((a,b)=> ({低:1,中:2,高:3}[a.vol] - ({低:1,中:2,高:3}[b.vol]));
+        const A = byVol[0] || estates[0];
+        const B = byPrice[0] || estates[1];
+
+        const lines = [];
+        // 句式 1：波动 vs 均价
+        if(A && B && A.id !== B.id){
+          lines.push(`“${escapeHtml(A.name)}”波动更小（${escapeHtml(A.vol)}），但“${escapeHtml(B.name)}”当前均价更高（${money(B.price)}）。`);
+        }
+        // 句式 2：回调更明显适合观察（但不预测）
+        const down = estates.filter(e => e.chg6m < -0.8).sort((a,b)=>a.chg6m-b.chg6m)[0];
+        if(down){
+          lines.push(`“${escapeHtml(down.name)}”近 6 月回调更明显（${pct(down.chg6m)}），可继续观察其后续走势（仅基于历史表现描述）。`);
+        }
+        // 句式 3：通勤/配套强项
+        const bestCommute = [...estates].sort((a,b)=>(b.reviews?.通勤||0)-(a.reviews?.通勤||0))[0];
+        if(bestCommute && bestCommute.reviews?.通勤 != null){
+          lines.push(`通勤维度上，“${escapeHtml(bestCommute.name)}”得分更高（${Number(bestCommute.reviews.通勤).toFixed(1)}）。`);
+        }
+        // 缺少数据提示
+        if(estates.some(e => !e.reviews || Object.keys(e.reviews).length === 0)){
+          lines.push(`部分小区缺少评价维度数据，已在表格中标注“缺少数据”。`);
+        }
+        const html = `
+          <div style="font-weight:750; color:var(--text); margin-bottom:6px;">差异总结（示意，不做预测）</div>
+          <div style="line-height:1.7;">
+            ${lines.length ? lines.map(s => "• " + s).join("<br/>") : "暂无可生成的结论句式。"}
+          </div>
+        `;
+        return html;
+      }
+
+      // ====== Auth & VIP ======
+      function toggleLogin(forceOn){
+        const next = (forceOn === true) ? true : !state.user.loggedIn;
+        state.user.loggedIn = next;
+        if(!next) state.user.isVip = false; // demo: 退出登录也退出 VIP
+        syncContext();
+        toast(next ? "登录成功（示意）" : "已退出登录", `
+          <div class="muted">真实产品可支持手机号/三方登录；登录后可收藏、订阅、保存对比历史。</div>
+        `);
+      }
+      function vipPayHTML(){
+        return `
+          <div style="font-weight:780; font-size:16px; margin-bottom:6px;">VIP 权益边界（示意）</div>
+          <div class="muted" style="line-height:1.7;">
+            免费：基础走势（近 12 月）、基础对比（2 个小区）、基础评价摘要。<br/>
+            VIP：更长历史区间、更多对比数（最多 5）、深度指标拆解、报告导出、优惠权益入口。
+          </div>
+          <div class="divider"></div>
+          <div class="row">
+            <button class="btn good" id="btnPayMock">立即支付（模拟）</button>
+            <button class="btn" id="btnLater">稍后再说</button>
+          </div>
+          <div class="footerNote small">
+            PRD 要求：付费入口需清晰说明免费/付费边界；支付成功后权益即时生效并引导返回。
+          </div>
+        `;
+      }
+      function bindVipPayButtons(){
+        $("#btnPayMock")?.addEventListener("click", () => {
+          if(!state.user.loggedIn) state.user.loggedIn = true;
+          state.user.isVip = true;
+          closeToast();
+          syncContext();
+          toast("开通成功（示意）", `<div>VIP 权益已生效：对比上限提升至 5，并解锁更长历史区间（示意）。</div>`);
+        });
+        $("#btnLater")?.addEventListener("click", closeToast);
+      }
+
+      // ====== Global bindings ======
+      $$(".pill").forEach(p => p.addEventListener("click", () => setRoute(p.dataset.route)));
+      $("#btnGoCompare").addEventListener("click", () => setRoute("compare"));
+      $("#btnToList").addEventListener("click", () => setRoute("list"));
+      $("#btnEnter").addEventListener("click", () => {
+        if(!state.selection.city){
+          toast("请先选择", `<div>请先选择城市与片区，再进入价格走势页。</div>`);
+          return;
+        }
+        setRoute("trend");
+      });
+
+      $("#searchRegion").addEventListener("input", () => handleSearchRegion());
+      $("#btnReset").addEventListener("click", () => {
+        state.route = "region";
+        state.user = { loggedIn:false, isVip:false };
+        state.selection = { city:null, region:null };
+        state.timeRange = 12;
+        state.recent = [];
+        state.favorites = new Set();
+        state.subscriptions = new Set();
+        state.compare = [];
+        state.lastDetailId = null;
+        listState.filters = new Set();
+        $("#sortSel").value = "price_desc";
+        $("#searchRegion").value = "";
+        renderRegion();
+        syncContext();
+        setRoute("region");
+      });
+
+      $("#btnLogin").addEventListener("click", () => toggleLogin());
+      $("#btnVip").addEventListener("click", () => {
+        if(state.user.isVip) return;
+        toast("开通 VIP", vipPayHTML());
+        bindVipPayButtons();
+      });
+
+      $$(".rangeBtn").forEach(btn => btn.addEventListener("click", () => {
+        const r = Number(btn.dataset.range);
+        state.timeRange = r;
+        $$(".rangeBtn").forEach(b => b.classList.remove("activeRange"));
+        btn.classList.add("activeRange");
+        syncContext();
+        renderTrend();
+        if(state.route === "detail") renderDetail();
+        if(state.route === "compare") renderCompare();
+      }));
+
+      $("#btnShare").addEventListener("click", () => {
+        const payload = {
+          city: state.selection.city,
+          region: state.selection.region,
+          compare: state.compare,
+          range: state.timeRange
+        };
+        const fakeLink = "https://example.com/share#" + btoa(unescape(encodeURIComponent(JSON.stringify(payload)))).slice(0, 24);
+        toast("分享链接（示意）", `
+          <div>已生成分享链接（示意）：</div>
+          <div class="hintBox mono" style="margin-top:10px; word-break:break-all;">${fakeLink}</div>
+          <div class="muted small" style="margin-top:8px;">真实产品中可生成可访问的分享页，并控制隐私与有效期。</div>
+        `);
+      });
+      $("#btnExport").addEventListener("click", () => {
+        if(!state.user.isVip){
+          toast("需要 VIP（示意）", `<div>报告导出/图片导出可作为 VIP 权益（PRD 建议）。</div><div class="divider"></div><button class="btn primary" id="btnOpenVip">开通 VIP</button>`);
+          $("#btnOpenVip")?.addEventListener("click", () => {
+            closeToast();
+            toast("开通 VIP", vipPayHTML());
+            bindVipPayButtons();
+          });
+          return;
+        }
+        toast("导出图片（示意）", `<div>已导出对比结果图片（示意）。真实产品可输出 PNG/PDF，并带来源与口径说明。</div>`);
+      });
+
+      $("#modalClose").addEventListener("click", closeToast);
+      $("#overlay").addEventListener("click", (e) => { if(e.target.id === "overlay") closeToast(); });
+
+      // ====== Boot ======
+      renderRegion();
+      syncContext();
+      setRoute("region");
+    </script>
+  </body>
+</html>
+
