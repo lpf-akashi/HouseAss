@@ -1,0 +1,109 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  body {
+    @apply min-h-screen;
+  }
+
+  ::selection {
+    @apply bg-clay-500/20 text-warm-900;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-warm-900 text-warm-50 px-5 py-2.5 rounded-lg font-medium
+           hover:bg-warm-800 active:scale-[0.98] transition-all duration-150
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  
+  .btn-secondary {
+    @apply border border-warm-300 text-warm-700 px-5 py-2.5 rounded-lg font-medium
+           hover:bg-warm-100 hover:border-warm-400 active:scale-[0.98] transition-all duration-150;
+  }
+
+  .btn-ghost {
+    @apply text-warm-600 px-4 py-2 rounded-lg font-medium
+           hover:bg-warm-100 active:scale-[0.98] transition-all duration-150;
+  }
+
+  .card {
+    @apply bg-white rounded-xl border border-warm-200 shadow-card
+           hover:shadow-card-hover transition-shadow duration-200;
+  }
+
+  .tag {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium;
+  }
+
+  .tag-green {
+    @apply tag bg-emerald-50 text-emerald-700 border border-emerald-200;
+  }
+
+  .tag-amber {
+    @apply tag bg-amber-50 text-amber-700 border border-amber-200;
+  }
+
+  .tag-red {
+    @apply tag bg-red-50 text-red-600 border border-red-200;
+  }
+
+  .tag-slate {
+    @apply tag bg-slate-50 text-slate-600 border border-slate-200;
+  }
+
+  .divider {
+    @apply border-t border-warm-200;
+  }
+
+  .section-title {
+    @apply font-serif text-xl font-semibold text-warm-900;
+  }
+
+  .page-container {
+    @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+}
+
+/* Smooth page transitions */
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(12px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+
+.animate-fade-in-up-delay-1 { animation-delay: 0.05s; opacity: 0; }
+.animate-fade-in-up-delay-2 { animation-delay: 0.1s; opacity: 0; }
+.animate-fade-in-up-delay-3 { animation-delay: 0.15s; opacity: 0; }
+.animate-fade-in-up-delay-4 { animation-delay: 0.2s; opacity: 0; }
+
+/* Scrollbar */
+::-webkit-scrollbar {
+  width: 6px;
+  height: 6px;
+}
+::-webkit-scrollbar-track {
+  background: transparent;
+}
+::-webkit-scrollbar-thumb {
+  background: #D9CDC0;
+  border-radius: 3px;
+}
+::-webkit-scrollbar-thumb:hover {
+  background: #C4B4A5;
+}
