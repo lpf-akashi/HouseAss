@@ -1,0 +1,41 @@
+{
+  "envId": "{{env.ENV_ID}}",
+  "version": "2.0",
+  "framework": {
+    "name": "vite",
+    "plugins": {
+      "client": {
+        "use": "@cloudbase/framework-plugin-website",
+        "inputs": {
+          "buildCommand": "npm run build",
+          "outputPath": "dist"
+        }
+      }
+    }
+  },
+  "functionRoot": "cloudfunctions",
+  "functions": [
+    {
+      "name": "communities",
+      "timeout": 10,
+      "runtime": "Nodejs18.15",
+      "envVariables": {
+        "AMAP_API_KEY": "{{env.AMAP_API_KEY}}",
+        "JUHE_API_KEY": "{{env.JUHE_API_KEY}}"
+      }
+    },
+    {
+      "name": "users",
+      "timeout": 5,
+      "runtime": "Nodejs18.15"
+    },
+    {
+      "name": "dataSync",
+      "timeout": 30,
+      "runtime": "Nodejs18.15",
+      "envVariables": {
+        "JUHE_API_KEY": "{{env.JUHE_API_KEY}}"
+      }
+    }
+  ]
+}
