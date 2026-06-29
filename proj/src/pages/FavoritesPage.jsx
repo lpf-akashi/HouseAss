@@ -1,9 +1,10 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Heart, Trash2, ChevronRight, MapPin, TrendingUp, TrendingDown, Minus } from 'lucide-react';
-import { communities } from '../data/mockData';
-import { getFavorites, removeFavorite } from '../utils/storage';
+import { Heart, Trash2, ChevronRight, MapPin, TrendingUp, TrendingDown, Minus, Loader } from 'lucide-react';
+import { communities as mockCommunities } from '../data/mockData';
+import { getFavorites, removeFavorite as localRemoveFavorite } from '../utils/storage';
 import { formatPrice } from '../utils/formatter';
+import api from '../services/api';
 
 const attentionStyles = {
   high: { tag: 'tag-green', label: '看房优先级高' },
@@ -20,16 +21,36 @@ const TrendIcon = ({ trend }) => {
 export default function FavoritesPage() {
   const navigate = useNavigate();
   const [favorites, setFavorites] = useState(() => getFavorites());
+  const [cloudFavorites, setCloudFavorites] = useState([]);
+  const [loading, setLoading] = useState(true);
+
+  // 加载云端收藏
+  useEffect(() => {
+    async function loadCloudFavorites() {
+      try {
+        const cloudFavs = await api.getFavorites();
+        if (cloudFavs && cloudFavs.length > 0) {
+          setCloudFavorites(cloudFavs);
+        }
+      } catch {
+        // 降级为本地存储
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadCloudFavorites();
+  }, []);
 
   const favoriteCommunities = favorites
     .map((f) => {
-      const c = communities.find((c) => c._id === f.communityId);
+      const c = mockCommunities.find((c) => c._id === f.communityId);
       return c ? { ...c, savedAt: f.savedAt } : null;
     })
     .filter(Boolean);
 
   const handleRemove = (id) => {
-    removeFavorite(id);
+    localRemoveFavorite(id);
+    api.removeFavorite(id); // fire-and-forget
     setFavorites(getFavorites());
   };
 
@@ -66,10 +87,10 @@ export default function FavoritesPage() {
                       <p className="text-lg font-semibold text-slate-800">{formatPrice(c.avgPrice, 'unit')}</p>
                       <p
                         className={`text-xs font-medium flex items-center justify-end gap-0.5 ${c.priceTrend === 'up'
-                            ? 'text-red-500'
-                            : c.priceTrend === 'down'
-                              ? 'text-green-500'
-                              : 'text-slate-500'
+                          ? 'text-red-500'
+                          : c.priceTrend === 'down'
+                            ? 'text-green-500'
+                            : 'text-slate-500'
                           }`}
                       >
                         <TrendIcon trend={c.priceTrend} />

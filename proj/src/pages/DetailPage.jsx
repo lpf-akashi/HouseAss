@@ -1,14 +1,15 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, MapPin, TrendingUp, TrendingDown, Minus,
-  AlertTriangle, CheckCircle2, Copy, Heart, Info, Calendar,
+  AlertTriangle, CheckCircle2, Copy, Heart, Info, Calendar, Loader,
 } from 'lucide-react';
 import CommunityCard from '../components/CommunityCard';
 import PriceChart from '../components/PriceChart';
-import { communities, checklistItems } from '../data/mockData';
+import { communities as mockCommunities, checklistItems } from '../data/mockData';
 import { formatPrice, formatDistance, formatNumber } from '../utils/formatter';
-import { getFavorites, addFavorite, removeFavorite } from '../utils/storage';
+import { getFavorites, addFavorite as localAddFavorite, removeFavorite as localRemoveFavorite } from '../utils/storage';
+import api from '../services/api';
 
 const attentionStyles = {
   high: { bg: 'bg-emerald-50 border-emerald-200', text: 'text-emerald-700', icon: 'text-emerald-500', label: '看房优先级高' },
@@ -21,8 +22,42 @@ export default function DetailPage() {
   const navigate = useNavigate();
   const [activeTab, setActiveTab] = useState('overview');
   const [showChecklistCopy, setShowChecklistCopy] = useState(false);
+  const [community, setCommunity] = useState(null);
+  const [loading, setLoading] = useState(true);
 
-  const community = communities.find((c) => c._id === id);
+  // 加载小区详情（优先云函数，降级 Mock）
+  useEffect(() => {
+    async function loadDetail() {
+      try {
+        const detail = await api.getCommunityDetail(id);
+        if (detail) {
+          setCommunity(detail);
+          // fire-and-forget 触发数据刷新（不阻塞页面渲染）
+          if (detail.needsRefresh) {
+            api.refreshCommunity(id);
+          }
+        } else {
+          // 降级为 Mock
+          const mock = mockCommunities.find((c) => c._id === id);
+          setCommunity(mock || null);
+        }
+      } catch {
+        const mock = mockCommunities.find((c) => c._id === id);
+        setCommunity(mock || null);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadDetail();
+  }, [id]);
+
+  if (loading) {
+    return (
+      <div className="min-h-screen flex items-center justify-center">
+        <Loader size={32} className="animate-spin text-slate-400" />
+      </div>
+    );
+  }
 
   if (!community) {
     return (
@@ -51,16 +86,18 @@ export default function DetailPage() {
 
   const toggleFavorite = () => {
     if (isFavorited) {
-      removeFavorite(community._id);
+      localRemoveFavorite(community._id);
+      api.removeFavorite(community._id); // fire-and-forget
     } else {
-      addFavorite(community._id, community.name, community.avgPrice, community.district, community.subDistrict);
+      localAddFavorite(community._id, community.name, community.avgPrice, community.district, community.subDistrict);
+      api.addFavorite(community._id); // fire-and-forget
     }
     // Force re-render
     navigate(`/detail/${community._id}`, { replace: true });
   };
 
   const alternatives = (community.alternatives || []).map((alt) => {
-    const full = communities.find((c) => c._id === alt.id);
+    const full = mockCommunities.find((c) => c._id === alt.id);
     return full || alt;
   });
 
@@ -183,8 +220,8 @@ export default function DetailPage() {
               key={tab.id}
               onClick={() => setActiveTab(tab.id)}
               className={`px-4 py-3 text-sm font-medium border-b-2 transition-all -mb-px whitespace-nowrap ${activeTab === tab.id
-                  ? 'border-slate-800 text-slate-800'
-                  : 'border-transparent text-slate-400 hover:text-slate-600'
+                ? 'border-slate-800 text-slate-800'
+                : 'border-transparent text-slate-400 hover:text-slate-600'
                 }`}
             >
               {tab.label}
@@ -246,10 +283,10 @@ export default function DetailPage() {
                       <div className="mt-2 h-1.5 bg-slate-200 rounded-full overflow-hidden">
                         <div
                           className={`h-full rounded-full transition-all ${item.score >= 8
-                              ? 'bg-emerald-500'
-                              : item.score >= 6
-                                ? 'bg-amber-500'
-                                : 'bg-red-400'
+                            ? 'bg-emerald-500'
+                            : item.score >= 6
+                              ? 'bg-amber-500'
+                              : 'bg-red-400'
                             }`}
                           style={{ width: `${(item.score / 10) * 100}%` }}
                         />

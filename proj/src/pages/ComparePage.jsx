@@ -1,8 +1,9 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { ArrowLeft, Plus, Trash2, ListPlus, X, ArrowUpRight, ArrowDownRight, Minus } from 'lucide-react';
-import { communities } from '../data/mockData';
+import { ArrowLeft, Plus, Trash2, ListPlus, X, ArrowUpRight, ArrowDownRight, Minus, Loader } from 'lucide-react';
+import { communities as mockCommunities } from '../data/mockData';
 import { formatPrice, formatDistance } from '../utils/formatter';
+import api from '../services/api';
 
 const attentionStyles = {
   high: { bg: 'bg-emerald-50 text-emerald-700', text: '看房优先级高' },
@@ -20,6 +21,25 @@ export default function ComparePage() {
   const navigate = useNavigate();
   const [selected, setSelected] = useState([]);
   const [showAddPanel, setShowAddPanel] = useState(false);
+  const [allCommunities, setAllCommunities] = useState(mockCommunities);
+  const [loading, setLoading] = useState(true);
+
+  // 加载数据
+  useEffect(() => {
+    async function loadData() {
+      try {
+        const result = await api.searchCommunities({});
+        if (result && result.list && result.list.length > 0) {
+          setAllCommunities(result.list);
+        }
+      } catch {
+        setAllCommunities(mockCommunities);
+      } finally {
+        setLoading(false);
+      }
+    }
+    loadData();
+  }, []);
 
   const addCommunity = (c) => {
     if (selected.length >= 4) return;
@@ -33,7 +53,7 @@ export default function ComparePage() {
     setSelected(selected.filter((s) => s._id !== id));
   };
 
-  const availableCommunities = communities.filter((c) => !selected.find((s) => s._id === c._id));
+  const availableCommunities = allCommunities.filter((c) => !selected.find((s) => s._id === c._id));
 
   const comparisonRows = [
     { label: '均价', key: 'avgPrice', format: (v) => formatPrice(v, 'unit') },
@@ -138,9 +158,8 @@ export default function ComparePage() {
                     {selected.map((c, i) => (
                       <th
                         key={c._id}
-                        className={`p-4 bg-slate-50 border-b border-slate-200 text-left ${
-                          i === selected.length - 1 ? 'rounded-tr-xl' : ''
-                        }`}
+                        className={`p-4 bg-slate-50 border-b border-slate-200 text-left ${i === selected.length - 1 ? 'rounded-tr-xl' : ''
+                          }`}
                       >
                         <div className="flex items-center justify-between">
                           <div>

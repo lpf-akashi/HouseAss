@@ -1,24 +1,52 @@
-import { useState } from 'react';
+import { useState, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { Clock, TrendingUp, ChevronRight, Compass } from 'lucide-react';
+import { Clock, TrendingUp, ChevronRight, Compass, Loader } from 'lucide-react';
 import SearchBar from '../components/SearchBar';
 import CommunityCard from '../components/CommunityCard';
-import { communities, districts, hotSearches, recentViews } from '../data/mockData';
+import { communities as mockCommunities, districts, hotSearches, recentViews } from '../data/mockData';
 import { addRecentView } from '../utils/storage';
+import api from '../services/api';
 
 export default function HomePage() {
     const navigate = useNavigate();
     const [activeDistrict, setActiveDistrict] = useState(null);
+    const [hotCommunities, setHotCommunities] = useState([]);
+    const [allCommunities, setAllCommunities] = useState(mockCommunities);
+    const [loading, setLoading] = useState(true);
+
+    // 加载数据（优先云函数，降级 Mock）
+    useEffect(() => {
+        async function loadData() {
+            try {
+                // 加载热门小区
+                const hot = await api.getHotCommunities();
+                setHotCommunities(hot || mockCommunities.filter((c) => hotSearches.includes(c.name)));
+
+                // 加载全部小区（用于区域浏览）
+                const result = await api.searchCommunities({});
+                if (result && result.list && result.list.length > 0) {
+                    setAllCommunities(result.list);
+                }
+            } catch {
+                // 降级为 Mock
+                setHotCommunities(mockCommunities.filter((c) => hotSearches.includes(c.name)));
+                setAllCommunities(mockCommunities);
+            } finally {
+                setLoading(false);
+            }
+        }
+        loadData();
+    }, []);
 
     const recentCommunities = recentViews
-        .map((rv) => communities.find((c) => c._id === rv.communityId))
+        .map((rv) => allCommunities.find((c) => c._id === rv.communityId))
         .filter(Boolean);
 
-    const hotCommunities = communities.filter((c) => hotSearches.includes(c.name));
-
     const filteredCommunities = activeDistrict
-        ? communities.filter((c) => c.district === activeDistrict)
+        ? allCommunities.filter((c) => c.district === activeDistrict)
         : [];
+
+    const displayCommunities = activeDistrict ? filteredCommunities : allCommunities;
 
     const handleSelectCommunity = (community) => {
         addRecentView(community._id, community.name);
@@ -45,7 +73,7 @@ export default function HomePage() {
                     {/* Quick Stats */}
                     <div className="flex flex-wrap justify-center gap-4 sm:gap-8 mt-8 animate-fade-in-up animate-fade-in-up-delay-3">
                         <div className="text-center">
-                            <p className="text-2xl font-semibold text-slate-800">{communities.length}</p>
+                            <p className="text-2xl font-semibold text-slate-800">{allCommunities.length}</p>
                             <p className="text-xs text-slate-500">覆盖小区</p>
                         </div>
                         <div className="text-center">
@@ -109,8 +137,8 @@ export default function HomePage() {
                         <button
                             onClick={() => setActiveDistrict(null)}
                             className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${!activeDistrict
-                                    ? 'bg-slate-800 text-white'
-                                    : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-400'
+                                ? 'bg-slate-800 text-white'
+                                : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-400'
                                 }`}
                         >
                             全部
@@ -120,8 +148,8 @@ export default function HomePage() {
                                 key={d.name}
                                 onClick={() => setActiveDistrict(d.name)}
                                 className={`px-4 py-2 rounded-lg text-sm font-medium transition-all ${activeDistrict === d.name
-                                        ? 'bg-slate-800 text-white'
-                                        : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-400'
+                                    ? 'bg-slate-800 text-white'
+                                    : 'bg-white text-slate-600 border border-slate-200 hover:border-slate-400'
                                     }`}
                             >
                                 {d.name} ({d.count})
@@ -129,9 +157,9 @@ export default function HomePage() {
                         ))}
                     </div>
 
-                    {(activeDistrict ? filteredCommunities : communities).length > 0 && (
+                    {(activeDistrict ? filteredCommunities : displayCommunities).length > 0 && (
                         <div className="grid sm:grid-cols-2 lg:grid-cols-3 gap-4">
-                            {(activeDistrict ? filteredCommunities : communities).map((c) => (
+                            {(activeDistrict ? filteredCommunities : displayCommunities).map((c) => (
                                 <CommunityCard key={c._id} community={c} onClick={handleSelectCommunity} />
                             ))}
                         </div>
@@ -140,6 +168,12 @@ export default function HomePage() {
                     {activeDistrict && filteredCommunities.length === 0 && (
                         <div className="text-center py-12 text-slate-400">
                             该区域暂无小区数据
+                        </div>
+                    )}
+
+                    {loading && (
+                        <div className="text-center py-12">
+                            <Loader size={24} className="animate-spin mx-auto text-slate-400" />
                         </div>
                     )}
                 </div>

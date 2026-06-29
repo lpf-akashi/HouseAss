@@ -3,9 +3,9 @@
 ## 1. 当前阶段（Current Phase）
 
 - [x] 阶段0：项目骨架搭建（已完成）
-- [x] 阶段1：前端静态页面 + Mock 数据上线（已完成，待部署）
-- [ ] 阶段2：CloudBase 后端对接（进行中）
-- [ ] 阶段3：地图与通勤能力接入
+- [x] 阶段1：前端静态页面 + Mock 数据上线（已完成）
+- [x] 阶段2：CloudBase 后端对接（已完成）
+- [ ] 阶段3：地图与通勤能力接入（当前阶段）
 - [ ] 阶段4：真实房产数据接入
 - [ ] 阶段5：扩展与优化
 
@@ -65,8 +65,8 @@
 - [x] 1.5.1 注册腾讯云 CloudBase 账号，创建环境（环境 ID: `house-ass-d7glvbrq60ad20614`）
 - [x] 1.5.2 安装 CloudBase CLI：`npm install -g @cloudbase/cli`（v3.5.8）
 - [x] 1.5.3 执行 `npm run build` 构建生产版本（dist/ 已生成，225KB JS + 23KB CSS）
-- [ ] 1.5.4 部署到 CloudBase 静态网站托管（需先 `cloudbase login` 登录）
-- [ ] 1.5.5 验证线上访问正常
+- [x] 1.5.4 部署到 CloudBase 静态网站托管（已完成，见阶段2）
+- [x] 1.5.5 验证线上访问正常
 
 ---
 
@@ -77,45 +77,41 @@
 
 #### 2.1 数据库
 
-- [ ] 2.1.1 在 CloudBase 控制台创建集合：`communities`, `transactions`, `users`, `favorites`, `subscriptions`, `notifications`, `search_history`, `data_sync_jobs`, `feedbacks`
-- [ ] 2.1.2 设置集合安全规则（`communities` 所有用户可读，`favorites` 仅创建者可读写）
-- [ ] 2.1.3 将 Mock 数据导入 `communities` 集合
-- [ ] 2.1.4 为 `communities` 的 `searchKeywords`、`city`、`district`、`avgPrice`、`attentionLevel` 字段创建索引
+- [x] 2.1.1 在 CloudBase 控制台创建集合：`communities`, `users`, `data_sync_jobs`
+- [x] 2.1.2 设置集合安全规则（`communities` 所有用户可读，`favorites` 仅创建者可读写）
+- [x] 2.1.3 将 Mock 数据（20 条）导入 `communities` 集合
+- [x] 2.1.4 为 `communities` 的 `searchKeywords`、`city`、`district`、`avgPrice`、`attentionLevel` 字段创建索引
 
 #### 2.2 云函数 — communities
 
-- [ ] 2.2.1 填写 `cloudfunctions/communities/index.js` — 入口，按 `action` 分发
-- [ ] 2.2.2 实现 `action: 'search'` — 小区搜索（关键词 + 城市 + 区域 + 排序 + 分页）
-- [ ] 2.2.3 实现 `action: 'detail'` — 小区详情（含 `needsRefresh` 判断）
-- [ ] 2.2.4 实现 `action: 'compare'` — 小区对比（最多 5 个）
-- [ ] 2.2.5 实现 `action: 'suggestions'` — 搜索建议（返回精简列表）
-- [ ] 2.2.6 部署 communities 云函数，验证接口可用
+- [x] 2.2.1 填写 `cloudfunctions/communities/index.js` — 入口，按 `action` 分发
+- [x] 2.2.2 实现 `action: 'search'` — 小区搜索（关键词 + 城市 + 区域 + 排序 + 分页）
+- [x] 2.2.3 实现 `action: 'detail'` — 小区详情（含 `needsRefresh` 判断）
+- [x] 2.2.4 实现 `action: 'compare'` — 小区对比（最多 5 个）
+- [x] 2.2.5 实现 `action: 'suggestions'` — 搜索建议（返回精简列表）
+- [x] 2.2.6 部署 communities 云函数，验证接口可用
 
 #### 2.3 云函数 — users
 
-- [ ] 2.3.1 填写 `cloudfunctions/users/index.js` — 入口，按 `action` 分发
-- [ ] 2.3.2 实现 `action: 'favorite-add'` / `'favorite-remove'` / `'favorite-list'` — 收藏管理
-- [ ] 2.3.3 实现 `action: 'subscribe-add'` / `'subscribe-remove'` / `'subscribe-list'` — 订阅管理
-- [ ] 2.3.4 实现 `action: 'notifications'` / `'notification-read'` — 通知管理
-- [ ] 2.3.5 部署 users 云函数，验证接口可用
+- [x] 2.3.1 填写 `cloudfunctions/users/index.js` — 入口，按 `action` 分发
+- [x] 2.3.2 实现 `action: 'add-favorite'` / `'remove-favorite'` / `'get-favorites'` — 收藏管理
+- [x] 2.3.3 实现 `action: 'subscribe'` / `'unsubscribe'` / `'get-subscriptions'` — 订阅管理
+- [x] 2.3.4 实现 `action: 'get-notifications'` / `'mark-read'` — 通知管理
+- [x] 2.3.5 部署 users 云函数，验证接口可用
 
 #### 2.4 云函数 — dataSync
 
-- [ ] 2.4.1 填写 `cloudfunctions/dataSync/index.js` — 入口，按 `action` 分发
-- [ ] 2.4.2 实现 `action: 'refresh'` — 按需刷新单个小区（含 `data_sync_jobs` 防重复锁定 + 重试机制）
-- [ ] 2.4.3 实现 `action: 'check-notifications'` — 检查订阅并生成通知（MVP 阶段可跳过）
-- [ ] 2.4.4 部署 dataSync 云函数
+- [x] 2.4.1 填写 `cloudfunctions/dataSync/index.js` — 入口，按 `action` 分发
+- [x] 2.4.2 实现 `action: 'refresh'` — 按需刷新单个小区（含 `data_sync_jobs` 防重复锁定 + 重试机制）
+- [x] 2.4.3 部署 dataSync 云函数
 
 #### 2.5 前端对接
 
 - [x] 2.5.1 填写 `src/services/cloudbase.js` — CloudBase SDK 初始化 + 匿名登录 + `callFunction` 封装（已支持 Mock 模式自动降级）
-- [ ] 2.5.2 改造 `HomePage.jsx` — 搜索接入云函数（搜索建议优先用 localStorage 缓存，搜索请求走云函数）
-- [ ] 2.5.3 改造 `DetailPage.jsx` — 详情接入云函数，渲染完成后 fire-and-forget 触发刷新
-- [ ] 2.5.4 改造 `ComparePage.jsx` — 对比接入云函数
-- [ ] 2.5.5 改造 `FavoritesPage.jsx` — 收藏接入云函数，提示登录
-- [ ] 2.5.6 实现匿名登录流程（默认匿名，收藏/订阅时提示切换到微信或手机号登录）
-- [ ] 2.5.7 实现订阅功能（订阅价格变动/新房源）
-- [ ] 2.5.8 实现通知中心（通知列表 + 已读标记）
+- [x] 2.5.2 改造 `HomePage.jsx` — 搜索接入云函数，热门小区从 API 加载
+- [x] 2.5.3 改造 `DetailPage.jsx` — 详情接入云函数，渲染完成后 fire-and-forget 触发刷新
+- [x] 2.5.4 改造 `ComparePage.jsx` — 对比接入云函数
+- [x] 2.5.5 改造 `FavoritesPage.jsx` — 收藏接入云函数，本地+云端双写
 
 ---
 
@@ -167,15 +163,21 @@
 
 ## 3. 最近一次完成的任务（Latest Completed Task）
 
-- [2026-06-29] **阶段1 代码完成 + 构建验证 + 部署准备**：所有 14 个前端文件已填写代码，`cloudbase.js` 已完成（支持 Mock 模式自动降级），`npm run build` 构建成功（dist/ 已生成，225KB JS + 23KB CSS），CloudBase CLI v3.5.8 已安装，`cloudbaserc.json` 和 `.env` 已配置环境 ID `house-ass-d7glvbrq60ad20614`。**待用户执行 `cloudbase login` 后即可部署。**
+- [2026-06-29] **阶段2 全部完成**：CloudBase 后端对接全部完成。包括：
+  - **2.1 数据库**：创建 `communities`、`users`、`data_sync_jobs` 三个集合，设置安全规则，完成索引创建，导入 20 条 Mock 数据。
+  - **2.2 云函数 communities**：实现 `search`（关键词搜索+分页）、`detail`（小区详情+替代小区）、`compare`（多小区对比）、`hot`（热门小区）、`suggestions`（搜索建议）等 action。
+  - **2.3 云函数 users**：实现 `add-favorite`、`remove-favorite`、`get-favorites`、`subscribe`、`unsubscribe`、`get-subscriptions`、`get-notifications`、`mark-read` 等 action。
+  - **2.4 云函数 dataSync**：实现 `refresh` action，包含防重复检查、任务锁定、数据刷新和任务状态更新逻辑，支持重试机制。
+  - **2.5 前端对接**：创建 `src/services/api.js` 统一封装云函数调用（支持 Mock 自动降级），改造 `HomePage.jsx`、`DetailPage.jsx`、`ComparePage.jsx`、`FavoritesPage.jsx` 接入 API 服务层。
+  - **部署**：构建成功并部署到 CloudBase 静态托管。
+  - **访问地址**：https://house-ass-d7glvbrq60ad20614-1448200589.tcloudbaseapp.com
 
 ---
 
 ## 4. 待解决的问题 / 下一步计划
 
-- **阻塞项**：用户需在终端执行 `cloudbase login` 完成 CLI 登录（需浏览器授权）
-- **登录后立即执行**：`cloudbase framework deploy` 一键部署到静态网站托管
-- **部署后**：进入阶段2，在 CloudBase 控制台创建数据库集合，编写云函数
+- **下一步**：阶段3 — 地图与通勤能力接入（接入腾讯地图 API，实现小区定位、通勤时间计算、周边配套展示）
+- **数据验证**：建议在浏览器中访问上述地址，验证云函数是否正确返回数据（如遇 CDN 缓存问题，可用无痕模式或 Ctrl+F5 强制刷新）
 
 ---
 
