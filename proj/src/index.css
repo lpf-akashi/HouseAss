@@ -1,0 +1,70 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  * {
+    -webkit-tap-highlight-color: transparent;
+  }
+  body {
+    @apply min-h-screen;
+  }
+  ::selection {
+    @apply bg-amber-100 text-amber-900;
+  }
+}
+
+@layer components {
+  .btn-primary {
+    @apply bg-slate-800 text-white px-5 py-2.5 rounded-lg font-medium
+           hover:bg-slate-700 active:scale-[0.98] transition-all duration-150
+           disabled:opacity-50 disabled:cursor-not-allowed;
+  }
+  .btn-secondary {
+    @apply border border-slate-300 text-slate-700 px-5 py-2.5 rounded-lg font-medium
+           hover:bg-slate-100 hover:border-slate-400 active:scale-[0.98] transition-all duration-150;
+  }
+  .card {
+    @apply bg-white rounded-xl border border-slate-200 shadow-sm
+           hover:shadow-md transition-shadow duration-200;
+  }
+  .tag-green {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+           bg-emerald-50 text-emerald-700 border border-emerald-200;
+  }
+  .tag-amber {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+           bg-amber-50 text-amber-700 border border-amber-200;
+  }
+  .tag-red {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+           bg-red-50 text-red-600 border border-red-200;
+  }
+  .tag-slate {
+    @apply inline-flex items-center px-2.5 py-0.5 rounded-full text-xs font-medium
+           bg-slate-50 text-slate-600 border border-slate-200;
+  }
+  .page-container {
+    @apply max-w-5xl mx-auto px-4 sm:px-6 lg:px-8;
+  }
+  .section-title {
+    @apply text-xl font-semibold text-slate-800;
+  }
+}
+
+@keyframes fadeInUp {
+  from { opacity: 0; transform: translateY(12px); }
+  to { opacity: 1; transform: translateY(0); }
+}
+.animate-fade-in-up {
+  animation: fadeInUp 0.4s ease-out forwards;
+}
+.animate-fade-in-up-delay-1 { animation-delay: 0.05s; opacity: 0; }
+.animate-fade-in-up-delay-2 { animation-delay: 0.1s; opacity: 0; }
+.animate-fade-in-up-delay-3 { animation-delay: 0.15s; opacity: 0; }
+.animate-fade-in-up-delay-4 { animation-delay: 0.2s; opacity: 0; }
+
+::-webkit-scrollbar { width: 6px; height: 6px; }
+::-webkit-scrollbar-track { background: transparent; }
+::-webkit-scrollbar-thumb { @apply bg-slate-300 rounded-full; }
+::-webkit-scrollbar-thumb:hover { @apply bg-slate-400; }

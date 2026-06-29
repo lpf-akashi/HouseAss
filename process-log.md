@@ -3,8 +3,8 @@
 ## 1. 当前阶段（Current Phase）
 
 - [x] 阶段0：项目骨架搭建（已完成）
-- [ ] 阶段1：前端静态页面 + Mock 数据上线（进行中）
-- [ ] 阶段2：CloudBase 后端对接
+- [x] 阶段1：前端静态页面 + Mock 数据上线（已完成，待部署）
+- [ ] 阶段2：CloudBase 后端对接（进行中）
 - [ ] 阶段3：地图与通勤能力接入
 - [ ] 阶段4：真实房产数据接入
 - [ ] 阶段5：扩展与优化
@@ -36,36 +36,36 @@
 
 #### 1.1 基础设施
 
-- [ ] 1.1.1 填写 `src/main.jsx` — React 入口，挂载 App
-- [ ] 1.1.2 填写 `src/App.jsx` — 根组件，配置 react-router-dom 路由
-- [ ] 1.1.3 填写 `src/index.css` — Tailwind 全局样式
-- [ ] 1.1.4 从 `Prototype/src/data/mockData.js` 迁移 Mock 数据到 `src/data/mockData.js`
+- [x] 1.1.1 填写 `src/main.jsx` — React 入口，挂载 App
+- [x] 1.1.2 填写 `src/App.jsx` — 根组件，配置 react-router-dom 路由
+- [x] 1.1.3 填写 `src/index.css` — Tailwind 全局样式
+- [x] 1.1.4 从 `Prototype/src/data/mockData.js` 迁移 Mock 数据到 `src/data/mockData.js`
 
 #### 1.2 工具函数
 
-- [ ] 1.2.1 填写 `src/utils/formatter.js` — 价格格式化（`formatPrice`）、数字千分位（`formatNumber`）、距离格式化（`formatDistance`）、相对时间（`formatRelativeTime`）
-- [ ] 1.2.2 填写 `src/utils/storage.js` — localStorage 封装（`getItem`/`setItem`/`removeItem`，支持 TTL 过期），小区精简列表缓存（`getCommunityList`/`setCommunityList`），搜索历史（`getSearchHistory`/`addSearchHistory`）
+- [x] 1.2.1 填写 `src/utils/formatter.js` — 价格格式化（`formatPrice`）、数字千分位（`formatNumber`）、距离格式化（`formatDistance`）、相对时间（`formatRelativeTime`）
+- [x] 1.2.2 填写 `src/utils/storage.js` — localStorage 封装（`getItem`/`setItem`/`removeItem`，支持 TTL 过期），小区精简列表缓存（`getCommunityList`/`setCommunityList`），搜索历史（`getSearchHistory`/`addSearchHistory`）
 
 #### 1.3 通用组件
 
-- [ ] 1.3.1 填写 `src/components/SearchBar.jsx` — 搜索栏，含输入框 + 搜索图标（lucide-react），支持 onSubmit 回调
-- [ ] 1.3.2 填写 `src/components/CommunityCard.jsx` — 小区卡片，展示名称、均价、区域、价格趋势，支持 loading 骨架屏和空状态
-- [ ] 1.3.3 填写 `src/components/PriceChart.jsx` — 价格走势图（MVP 阶段可用简单柱状图或占位，后续升级为 ECharts）
+- [x] 1.3.1 填写 `src/components/SearchBar.jsx` — 搜索栏，含输入框 + 搜索图标（lucide-react），支持 onSubmit 回调
+- [x] 1.3.2 填写 `src/components/CommunityCard.jsx` — 小区卡片，展示名称、均价、区域、价格趋势，支持 loading 骨架屏和空状态
+- [x] 1.3.3 填写 `src/components/PriceChart.jsx` — 价格走势图（MVP 阶段可用简单柱状图或占位，后续升级为 ECharts）
 
 #### 1.4 页面
 
-- [ ] 1.4.1 填写 `src/pages/HomePage.jsx` — 首页：搜索栏 + 小区列表（Mock 数据），支持关键词过滤
-- [ ] 1.4.2 填写 `src/pages/DetailPage.jsx` — 小区详情页：基本信息、价格趋势、看房关注等级、评分明细、替代小区、数据来源声明
-- [ ] 1.4.3 填写 `src/pages/ComparePage.jsx` — 对比页：选择 2-3 个小区，表格对比关键指标
-- [ ] 1.4.4 填写 `src/pages/FavoritesPage.jsx` — 收藏页（MVP 阶段用 localStorage 模拟，暂不接后端）
-- [ ] 1.4.5 填写 `src/pages/ChecklistPage.jsx` — 看房清单页
+- [x] 1.4.1 填写 `src/pages/HomePage.jsx` — 首页：搜索栏 + 小区列表（Mock 数据），支持关键词过滤
+- [x] 1.4.2 填写 `src/pages/DetailPage.jsx` — 小区详情页：基本信息、价格趋势、看房关注等级、评分明细、替代小区、数据来源声明
+- [x] 1.4.3 填写 `src/pages/ComparePage.jsx` — 对比页：选择 2-3 个小区，表格对比关键指标
+- [x] 1.4.4 填写 `src/pages/FavoritesPage.jsx` — 收藏页（MVP 阶段用 localStorage 模拟，暂不接后端）
+- [x] 1.4.5 填写 `src/pages/ChecklistPage.jsx` — 看房清单页
 
 #### 1.5 部署
 
-- [ ] 1.5.1 注册腾讯云 CloudBase 账号，创建环境
-- [ ] 1.5.2 安装 CloudBase CLI：`npm install -g @cloudbase/cli`
-- [ ] 1.5.3 执行 `npm run build` 构建生产版本
-- [ ] 1.5.4 部署到 CloudBase 静态网站托管
+- [x] 1.5.1 注册腾讯云 CloudBase 账号，创建环境（环境 ID: `house-ass-d7glvbrq60ad20614`）
+- [x] 1.5.2 安装 CloudBase CLI：`npm install -g @cloudbase/cli`（v3.5.8）
+- [x] 1.5.3 执行 `npm run build` 构建生产版本（dist/ 已生成，225KB JS + 23KB CSS）
+- [ ] 1.5.4 部署到 CloudBase 静态网站托管（需先 `cloudbase login` 登录）
 - [ ] 1.5.5 验证线上访问正常
 
 ---
@@ -108,7 +108,7 @@
 
 #### 2.5 前端对接
 
-- [ ] 2.5.1 填写 `src/services/cloudbase.js` — CloudBase SDK 初始化 + 匿名登录 + `callFunction` 封装
+- [x] 2.5.1 填写 `src/services/cloudbase.js` — CloudBase SDK 初始化 + 匿名登录 + `callFunction` 封装（已支持 Mock 模式自动降级）
 - [ ] 2.5.2 改造 `HomePage.jsx` — 搜索接入云函数（搜索建议优先用 localStorage 缓存，搜索请求走云函数）
 - [ ] 2.5.3 改造 `DetailPage.jsx` — 详情接入云函数，渲染完成后 fire-and-forget 触发刷新
 - [ ] 2.5.4 改造 `ComparePage.jsx` — 对比接入云函数
@@ -167,15 +167,15 @@
 
 ## 3. 最近一次完成的任务（Latest Completed Task）
 
-- [2026-06-28] **阶段0 完成：项目骨架搭建 + 依赖安装 + 编译验证**：在 `proj/` 下创建了完整目录结构，`npm install` 安装 149 个依赖包，`npm run dev` 编译通过（Vite v5.4.21），项目骨架可正常启动。阶段0 全部 11 项任务完成，进入阶段1。
+- [2026-06-29] **阶段1 代码完成 + 构建验证 + 部署准备**：所有 14 个前端文件已填写代码，`cloudbase.js` 已完成（支持 Mock 模式自动降级），`npm run build` 构建成功（dist/ 已生成，225KB JS + 23KB CSS），CloudBase CLI v3.5.8 已安装，`cloudbaserc.json` 和 `.env` 已配置环境 ID `house-ass-d7glvbrq60ad20614`。**待用户执行 `cloudbase login` 后即可部署。**
 
 ---
 
 ## 4. 待解决的问题 / 下一步计划
 
-- **下一步**：进入阶段1，填写前端页面代码，从 `Prototype/src/data/mockData.js` 迁移 Mock 数据，实现纯前端可运行的 MVP
-- **首先完成**：1.1.1 `main.jsx` → 1.1.2 `App.jsx` → 1.1.3 `index.css` → 1.1.4 Mock 数据迁移 → 1.2 工具函数 → 1.3 通用组件 → 1.4 页面
-- **待确认**：CloudBase 环境创建需要腾讯云账号，阶段1 部署时需用户自行注册
+- **阻塞项**：用户需在终端执行 `cloudbase login` 完成 CLI 登录（需浏览器授权）
+- **登录后立即执行**：`cloudbase framework deploy` 一键部署到静态网站托管
+- **部署后**：进入阶段2，在 CloudBase 控制台创建数据库集合，编写云函数
 
 ---
 
