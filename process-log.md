@@ -5,8 +5,8 @@
 - [x] 阶段0：项目骨架搭建（已完成）
 - [x] 阶段1：前端静态页面 + Mock 数据上线（已完成）
 - [x] 阶段2：CloudBase 后端对接（已完成）
-- [ ] 阶段3：地图与通勤能力接入（当前阶段）
-- [ ] 阶段4：真实房产数据接入
+- [x] 阶段3：地图与通勤能力接入（已完成）
+- [ ] 阶段4：真实房产数据接入（当前阶段）
 - [ ] 阶段5：扩展与优化
 
 ---
@@ -120,13 +120,13 @@
 > **目标**：通过高德地图 API 提供通勤时间、地铁距离、周边配套等空间信息。
 > **对应 TechSpec 第8章"阶段三"**
 
-- [ ] 3.1 注册高德开放平台账号，获取 Web 服务 API Key
-- [ ] 3.2 在 CloudBase 控制台配置云函数环境变量 `AMAP_API_KEY`
-- [ ] 3.3 在 communities 云函数中新增 `action: 'commute'` — 通勤时间计算（起点 → 小区经纬度）
-- [ ] 3.4 在 communities 云函数中新增 `action: 'nearby-poi'` — 周边配套查询（学校/医院/商场）
-- [ ] 3.5 在 DetailPage 中新增通勤时间展示模块
-- [ ] 3.6 在 DetailPage 中新增周边配套展示模块
-- [ ] 3.7 做好服务端缓存（同一小区 + 同一目标地的通勤时间缓存 24 小时）
+- [x] 3.1 注册高德开放平台账号，获取 Web 服务 API Key
+- [x] 3.2 在 CloudBase 控制台配置云函数环境变量 `AMAP_API_KEY`
+- [x] 3.3 在 communities 云函数中新增 `action: 'commute'` — 通勤时间计算（驾车/公交/步行）
+- [x] 3.4 在 communities 云函数中新增 `action: 'nearby-poi'` — 周边配套查询（学校/医院/商场/地铁/餐饮）
+- [x] 3.5 在 DetailPage 中新增通勤时间展示模块（目的地输入 + 出行方式选择 + 预设常用目的地）
+- [x] 3.6 在 DetailPage 中新增周边配套展示模块（5类POI分类展示）
+- [x] 3.7 做好服务端缓存（同一小区 + 同一目标地的通勤时间缓存 24 小时）
 
 ---
 
@@ -163,21 +163,20 @@
 
 ## 3. 最近一次完成的任务（Latest Completed Task）
 
-- [2026-06-29] **阶段2 全部完成**：CloudBase 后端对接全部完成。包括：
-  - **2.1 数据库**：创建 `communities`、`users`、`data_sync_jobs` 三个集合，设置安全规则，完成索引创建，导入 20 条 Mock 数据。
-  - **2.2 云函数 communities**：实现 `search`（关键词搜索+分页）、`detail`（小区详情+替代小区）、`compare`（多小区对比）、`hot`（热门小区）、`suggestions`（搜索建议）等 action。
-  - **2.3 云函数 users**：实现 `add-favorite`、`remove-favorite`、`get-favorites`、`subscribe`、`unsubscribe`、`get-subscriptions`、`get-notifications`、`mark-read` 等 action。
-  - **2.4 云函数 dataSync**：实现 `refresh` action，包含防重复检查、任务锁定、数据刷新和任务状态更新逻辑，支持重试机制。
-  - **2.5 前端对接**：创建 `src/services/api.js` 统一封装云函数调用（支持 Mock 自动降级），改造 `HomePage.jsx`、`DetailPage.jsx`、`ComparePage.jsx`、`FavoritesPage.jsx` 接入 API 服务层。
-  - **部署**：构建成功并部署到 CloudBase 静态托管。
-  - **访问地址**：https://house-ass-d7glvbrq60ad20614-1448200589.tcloudbaseapp.com
+- [2026-06-29] **阶段3 全部完成**：地图与通勤能力接入。包括：
+  - 配置高德地图 API Key 到 CloudBase 环境变量。
+  - 云函数 communities 新增 `commute` action（支持驾车/公交/步行三种模式，自动地理编码解析目的地，24小时缓存）。
+  - 云函数 communities 新增 `nearby-poi` action（并行查询学校、医院、购物、地铁站、餐饮5类POI）。
+  - 前端 api.js 新增 `getCommuteTime` 和 `getNearbyPoi` 方法（含 Mock 降级）。
+  - DetailPage 新增「通勤时间」tab：目的地输入 + 出行方式切换 + 7个预设常用目的地 + 结果展示。
+  - DetailPage 新增「周边配套」tab：分类展示5类POI，每类最多5条，支持距离和类型标签。
+  - 云函数 + 前端已部署到 CloudBase。
 
 ---
 
 ## 4. 待解决的问题 / 下一步计划
 
-- **下一步**：阶段3 — 地图与通勤能力接入（接入腾讯地图 API，实现小区定位、通勤时间计算、周边配套展示）
-- **数据验证**：建议在浏览器中访问上述地址，验证云函数是否正确返回数据（如遇 CDN 缓存问题，可用无痕模式或 Ctrl+F5 强制刷新）
+- **下一步**：阶段4 — 真实房产数据接入（需调研确认 API 供应商，如聚合数据 / 贝壳开放平台）
 
 ---
 

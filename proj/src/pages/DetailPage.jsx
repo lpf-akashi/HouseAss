@@ -3,6 +3,7 @@ import { useParams, useNavigate } from 'react-router-dom';
 import {
   ArrowLeft, MapPin, TrendingUp, TrendingDown, Minus,
   AlertTriangle, CheckCircle2, Copy, Heart, Info, Calendar, Loader,
+  Clock, Car, Bus, Footprints, School, Building2, ShoppingBag, Train, UtensilsCrossed,
 } from 'lucide-react';
 import CommunityCard from '../components/CommunityCard';
 import PriceChart from '../components/PriceChart';
@@ -17,6 +18,35 @@ const attentionStyles = {
   low: { bg: 'bg-red-50 border-red-200', text: 'text-red-600', icon: 'text-red-500', label: '暂不建议看房' },
 };
 
+// 周边配套子组件
+function PoiSection({ icon, label, pois, color, bgColor }) {
+  if (!pois || pois.length === 0) return null;
+  return (
+    <div>
+      <h4 className="flex items-center gap-2 text-sm font-semibold text-slate-700 mb-2">
+        <span className={color}>{icon}</span>
+        {label}
+        <span className="text-xs font-normal text-slate-400">({pois.length})</span>
+      </h4>
+      <div className="space-y-1.5">
+        {pois.slice(0, 5).map((poi) => (
+          <div key={poi.id} className="flex items-center justify-between py-1.5 px-3 rounded-md bg-slate-50 hover:bg-slate-100 transition-colors">
+            <div className="flex items-center gap-2 min-w-0">
+              <span className={`w-1.5 h-1.5 rounded-full flex-shrink-0 ${bgColor}`} style={{ backgroundColor: 'currentColor' }} />
+              <span className="text-sm text-slate-700 truncate">{poi.name}</span>
+              <span className="text-xs text-slate-400 flex-shrink-0 hidden sm:inline">{poi.typeLabel}</span>
+            </div>
+            <span className="text-xs text-slate-400 flex-shrink-0 ml-2">{poi.distanceText}</span>
+          </div>
+        ))}
+        {pois.length > 5 && (
+          <p className="text-xs text-slate-400 pl-6">还有 {pois.length - 5} 个...</p>
+        )}
+      </div>
+    </div>
+  );
+}
+
 export default function DetailPage() {
   const { id } = useParams();
   const navigate = useNavigate();
@@ -24,6 +54,16 @@ export default function DetailPage() {
   const [showChecklistCopy, setShowChecklistCopy] = useState(false);
   const [community, setCommunity] = useState(null);
   const [loading, setLoading] = useState(true);
+
+  // 通勤时间
+  const [commuteDest, setCommuteDest] = useState('');
+  const [commuteMode, setCommuteMode] = useState('driving');
+  const [commuteData, setCommuteData] = useState(null);
+  const [commuteLoading, setCommuteLoading] = useState(false);
+
+  // 周边配套
+  const [nearbyData, setNearbyData] = useState(null);
+  const [nearbyLoading, setNearbyLoading] = useState(false);
 
   // 加载小区详情（优先云函数，降级 Mock）
   useEffect(() => {
@@ -112,6 +152,41 @@ export default function DetailPage() {
       setTimeout(() => setShowChecklistCopy(false), 2000);
     });
   };
+
+  // 查询通勤时间
+  const handleCommuteSearch = async () => {
+    if (!commuteDest.trim()) return;
+    setCommuteLoading(true);
+    try {
+      const data = await api.getCommuteTime(community._id, commuteDest.trim(), commuteMode);
+      setCommuteData(data);
+    } catch {
+      setCommuteData(null);
+    } finally {
+      setCommuteLoading(false);
+    }
+  };
+
+  // 加载周边配套
+  const loadNearbyPoi = async () => {
+    if (nearbyData) return; // 已加载过
+    setNearbyLoading(true);
+    try {
+      const data = await api.getNearbyPoi(community._id);
+      setNearbyData(data);
+    } catch {
+      setNearbyData(null);
+    } finally {
+      setNearbyLoading(false);
+    }
+  };
+
+  // 切换 tab 时自动加载周边配套
+  useEffect(() => {
+    if (activeTab === 'nearby' && !nearbyData && !nearbyLoading) {
+      loadNearbyPoi();
+    }
+  }, [activeTab]);
 
   return (
     <div className="min-h-screen pb-16">
@@ -213,6 +288,8 @@ export default function DetailPage() {
           {[
             { id: 'overview', label: '小区概况' },
             { id: 'transactions', label: '成交记录' },
+            { id: 'commute', label: '通勤时间' },
+            { id: 'nearby', label: '周边配套' },
             { id: 'alternatives', label: '替代小区' },
             { id: 'checklist', label: '看房要点' },
           ].map((tab) => (
@@ -370,6 +447,182 @@ export default function DetailPage() {
                   </tbody>
                 </table>
               </div>
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'commute' && (
+          <div className="animate-fade-in-up">
+            <div className="card p-5 mb-6">
+              <h3 className="text-lg font-semibold text-slate-800 mb-4 flex items-center gap-2">
+                <Clock size={18} className="text-slate-400" />
+                通勤时间计算
+              </h3>
+              <p className="text-sm text-slate-500 mb-4">
+                输入你的工作地点，查看从该小区出发的通勤时间
+              </p>
+
+              {/* 出行方式选择 */}
+              <div className="flex gap-2 mb-4">
+                {[
+                  { key: 'driving', label: '驾车', icon: Car },
+                  { key: 'transit', label: '公交/地铁', icon: Bus },
+                  { key: 'walking', label: '步行', icon: Footprints },
+                ].map((m) => (
+                  <button
+                    key={m.key}
+                    onClick={() => { setCommuteMode(m.key); setCommuteData(null); }}
+                    className={`flex items-center gap-1.5 px-3 py-2 rounded-lg text-sm font-medium transition-all ${commuteMode === m.key
+                      ? 'bg-slate-800 text-white'
+                      : 'bg-slate-100 text-slate-600 hover:bg-slate-200'
+                      }`}
+                  >
+                    <m.icon size={14} />
+                    {m.label}
+                  </button>
+                ))}
+              </div>
+
+              {/* 目的地输入 */}
+              <div className="flex gap-2 mb-4">
+                <input
+                  type="text"
+                  placeholder="输入目的地，如：国贸、中关村、望京SOHO"
+                  value={commuteDest}
+                  onChange={(e) => setCommuteDest(e.target.value)}
+                  onKeyDown={(e) => e.key === 'Enter' && handleCommuteSearch()}
+                  className="flex-1 px-4 py-2.5 border border-slate-200 rounded-lg text-sm focus:outline-none focus:ring-2 focus:ring-slate-200 focus:border-slate-300"
+                />
+                <button
+                  onClick={handleCommuteSearch}
+                  disabled={commuteLoading || !commuteDest.trim()}
+                  className="btn-primary text-sm px-4 disabled:opacity-50"
+                >
+                  {commuteLoading ? (
+                    <Loader size={16} className="animate-spin" />
+                  ) : (
+                    '查询'
+                  )}
+                </button>
+              </div>
+
+              {/* 预设常用目的地 */}
+              <div className="flex flex-wrap gap-2 mb-4">
+                <span className="text-xs text-slate-400 mr-1 pt-1">常用：</span>
+                {['国贸', '中关村', '望京', '西二旗', '金融街', '上地', '五道口'].map((d) => (
+                  <button
+                    key={d}
+                    onClick={() => { setCommuteDest(d); setCommuteData(null); }}
+                    className="text-xs px-2.5 py-1 rounded-full bg-slate-100 text-slate-600 hover:bg-slate-200 transition-colors"
+                  >
+                    {d}
+                  </button>
+                ))}
+              </div>
+
+              {/* 通勤结果 */}
+              {commuteData && (
+                <div className="bg-slate-50 rounded-lg p-4 border border-slate-100">
+                  <div className="flex items-center justify-between mb-3">
+                    <span className="text-sm text-slate-500">
+                      {community.name} → {commuteData.destination}
+                    </span>
+                    <span className="text-xs text-slate-400">{commuteData.modeLabel}</span>
+                  </div>
+                  <div className="grid grid-cols-2 gap-4">
+                    <div className="text-center">
+                      <p className="text-3xl font-bold text-slate-800">
+                        {commuteData.duration >= 0 ? commuteData.duration : '--'}
+                      </p>
+                      <p className="text-xs text-slate-500 mt-1">分钟</p>
+                    </div>
+                    <div className="text-center">
+                      <p className="text-3xl font-bold text-slate-800">
+                        {commuteData.distance >= 0 ? (commuteData.distance / 1000).toFixed(1) : '--'}
+                      </p>
+                      <p className="text-xs text-slate-500 mt-1">公里</p>
+                    </div>
+                  </div>
+                  {commuteData.stale && (
+                    <p className="text-xs text-amber-500 mt-2 text-center">数据可能已过期，仅作参考</p>
+                  )}
+                  {commuteData.mock && (
+                    <p className="text-xs text-slate-400 mt-2 text-center">当前为估算数据，实际通勤时间可能不同</p>
+                  )}
+                </div>
+              )}
+            </div>
+          </div>
+        )}
+
+        {activeTab === 'nearby' && (
+          <div className="animate-fade-in-up">
+            <div className="card p-5">
+              <h3 className="text-lg font-semibold text-slate-800 mb-1 flex items-center gap-2">
+                <Building2 size={18} className="text-slate-400" />
+                周边配套
+              </h3>
+              <p className="text-sm text-slate-500 mb-5">
+                {nearbyData ? `以 ${community.name} 为中心，${nearbyData.radius}米范围内` : '加载中...'}
+              </p>
+
+              {nearbyLoading ? (
+                <div className="text-center py-8">
+                  <Loader size={24} className="animate-spin mx-auto text-slate-400" />
+                  <p className="text-sm text-slate-400 mt-2">正在查询周边配套...</p>
+                </div>
+              ) : nearbyData ? (
+                <div className="space-y-5">
+                  {/* 地铁站 */}
+                  <PoiSection
+                    icon={<Train size={16} />}
+                    label={nearbyData.metro.label}
+                    pois={nearbyData.metro.pois}
+                    color="text-blue-500"
+                    bgColor="bg-blue-50"
+                  />
+                  {/* 学校 */}
+                  <PoiSection
+                    icon={<School size={16} />}
+                    label={nearbyData.schools.label}
+                    pois={nearbyData.schools.pois}
+                    color="text-emerald-500"
+                    bgColor="bg-emerald-50"
+                  />
+                  {/* 医院 */}
+                  <PoiSection
+                    icon={<Building2 size={16} />}
+                    label={nearbyData.hospitals.label}
+                    pois={nearbyData.hospitals.pois}
+                    color="text-red-500"
+                    bgColor="bg-red-50"
+                  />
+                  {/* 购物 */}
+                  <PoiSection
+                    icon={<ShoppingBag size={16} />}
+                    label={nearbyData.shopping.label}
+                    pois={nearbyData.shopping.pois}
+                    color="text-purple-500"
+                    bgColor="bg-purple-50"
+                  />
+                  {/* 餐饮 */}
+                  <PoiSection
+                    icon={<UtensilsCrossed size={16} />}
+                    label={nearbyData.restaurants.label}
+                    pois={nearbyData.restaurants.pois}
+                    color="text-orange-500"
+                    bgColor="bg-orange-50"
+                  />
+                </div>
+              ) : (
+                <div className="text-center py-8 text-slate-400">
+                  <p>暂无周边配套数据</p>
+                </div>
+              )}
+
+              {nearbyData?.mock && (
+                <p className="text-xs text-slate-400 mt-4 text-center">当前为示例数据，实际配套信息可能不同</p>
+              )}
             </div>
           </div>
         )}

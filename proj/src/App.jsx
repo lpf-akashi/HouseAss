@@ -1,4 +1,4 @@
-import { BrowserRouter, Routes, Route } from 'react-router-dom';
+import { HashRouter, Routes, Route } from 'react-router-dom';
 import HomePage from './pages/HomePage';
 import DetailPage from './pages/DetailPage';
 import ComparePage from './pages/ComparePage';
@@ -7,7 +7,7 @@ import ChecklistPage from './pages/ChecklistPage';
 
 export default function App() {
   return (
-    <BrowserRouter>
+    <HashRouter>
       <div className="min-h-screen bg-[#faf8f5]">
         <Routes>
           <Route path="/" element={<HomePage />} />
@@ -17,6 +17,6 @@ export default function App() {
           <Route path="/checklist" element={<ChecklistPage />} />
         </Routes>
       </div>
-    </BrowserRouter>
+    </HashRouter>
   );
 }
