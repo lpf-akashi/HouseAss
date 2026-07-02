@@ -234,8 +234,11 @@ export async function compareCommunities(ids) {
  * @param {string} mode - 出行方式：driving | transit | walking
  */
 export async function getCommuteTime(communityId, destination, mode = 'driving') {
+  console.log('[api] getCommuteTime called', { communityId, destination, mode });
   if (useMock) {
-    return mockCommuteTime(communityId, destination, mode);
+    const result = mockCommuteTime(communityId, destination, mode);
+    console.log('[api] getCommuteTime mock result', result);
+    return result;
   }
 
   try {
@@ -260,8 +263,11 @@ export async function getCommuteTime(communityId, destination, mode = 'driving')
  * @param {number} radius - 搜索半径（米），默认 1000
  */
 export async function getNearbyPoi(communityId, radius = 1000) {
+  console.log('[api] getNearbyPoi called', { communityId, radius });
   if (useMock) {
-    return mockNearbyPoi(communityId);
+    const result = mockNearbyPoi(communityId);
+    console.log('[api] getNearbyPoi mock result', result);
+    return result;
   }
 
   try {
@@ -348,15 +354,25 @@ function mockNearbyPoi(communityId) {
     metro: {
       label: '地铁站',
       pois: community.nearbyMetro
-        ? community.nearbyMetro.split(',').map((m, i) => ({
-          id: `m${i}`,
-          name: m.trim(),
-          type: '150500',
-          typeLabel: '地铁站',
-          address: `${community.subDistrict}路`,
-          distance: 200 + i * 300,
-          distanceText: `${200 + i * 300}米`,
-        }))
+        ? (Array.isArray(community.nearbyMetro)
+          ? community.nearbyMetro.map((m, i) => ({
+            id: `m${i}`,
+            name: m.trim(),
+            type: '150500',
+            typeLabel: '地铁站',
+            address: `${community.subDistrict}路`,
+            distance: 200 + i * 300,
+            distanceText: `${200 + i * 300}米`,
+          }))
+          : community.nearbyMetro.split(',').map((m, i) => ({
+            id: `m${i}`,
+            name: m.trim(),
+            type: '150500',
+            typeLabel: '地铁站',
+            address: `${community.subDistrict}路`,
+            distance: 200 + i * 300,
+            distanceText: `${200 + i * 300}米`,
+          })))
         : [{ id: 'm1', name: '未知地铁站', type: '150500', typeLabel: '地铁站', address: '', distance: 500, distanceText: '500米' }],
     },
     restaurants: {

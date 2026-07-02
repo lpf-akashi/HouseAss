@@ -91,13 +91,21 @@ export default function DetailPage() {
     loadDetail();
   }, [id]);
 
-  // 切换 tab 时自动加载周边配套
+  // 切换 tab 时自动加载周边配套（已移至 early return 之前）
   useEffect(() => {
+    console.log('[DetailPage] nearby useEffect triggered', { activeTab, nearbyData: !!nearbyData, nearbyLoading, communityId: community?._id });
     if (activeTab === 'nearby' && !nearbyData && !nearbyLoading && community) {
+      console.log('[DetailPage] calling api.getNearbyPoi', community._id);
       setNearbyLoading(true);
       api.getNearbyPoi(community._id)
-        .then((data) => setNearbyData(data))
-        .catch(() => setNearbyData(null))
+        .then((data) => {
+          console.log('[DetailPage] nearby data loaded', data);
+          setNearbyData(data);
+        })
+        .catch((err) => {
+          console.error('[DetailPage] nearby data error', err);
+          setNearbyData(null);
+        })
         .finally(() => setNearbyLoading(false));
     }
   }, [activeTab, community, nearbyData, nearbyLoading]);
@@ -167,11 +175,14 @@ export default function DetailPage() {
   // 查询通勤时间
   const handleCommuteSearch = async () => {
     if (!commuteDest.trim()) return;
+    console.log('[DetailPage] handleCommuteSearch', { communityId: community._id, dest: commuteDest.trim(), mode: commuteMode });
     setCommuteLoading(true);
     try {
       const data = await api.getCommuteTime(community._id, commuteDest.trim(), commuteMode);
+      console.log('[DetailPage] commute data loaded', data);
       setCommuteData(data);
-    } catch {
+    } catch (err) {
+      console.error('[DetailPage] commute data error', err);
       setCommuteData(null);
     } finally {
       setCommuteLoading(false);
@@ -382,7 +393,7 @@ export default function DetailPage() {
                   { label: '容积率', value: community.plotRatio },
                   { label: '总户数', value: `${formatNumber(community.totalUnits)}户` },
                   { label: '物业类型', value: community.propertyType },
-                  { label: '地铁', value: community.nearbyMetro.join(' / ') },
+                  { label: '地铁', value: Array.isArray(community.nearbyMetro) ? community.nearbyMetro.join(' / ') : (community.nearbyMetro || '无') },
                   { label: '距地铁', value: formatDistance(community.distanceToMetroMeters) },
                 ].map((item) => (
                   <div key={item.label}>
