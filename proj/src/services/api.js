@@ -7,24 +7,11 @@
  *   3. 搜索建议：优先使用 localStorage 缓存，不调用云函数
  */
 
-import { callFunction, ensureAuth } from './cloudbase';
+// import { callFunction, ensureAuth } from './cloudbase';
 import { communities as mockCommunities } from '../data/mockData';
 
-// 是否使用 Mock 模式（由 cloudbase.js 的 getStatus() 决定）
-let useMock = true;
-
-// 初始化：检查 CloudBase 是否可用
-async function init() {
-  try {
-    const auth = await ensureAuth();
-    useMock = !auth;
-  } catch {
-    useMock = true;
-  }
-}
-
-// 页面加载时初始化
-init();
+// 是否使用 Mock 模式（暂时强制 Mock，排查 React error #310）
+const useMock = true;
 
 // ========== 小区相关 API ==========
 
@@ -448,4 +435,6 @@ export default {
   removeFavorite,
   getFavorites,
   compareCommunities,
+  getCommuteTime,
+  getNearbyPoi,
 };

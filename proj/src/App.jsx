@@ -1,4 +1,5 @@
 import { HashRouter, Routes, Route } from 'react-router-dom';
+import ErrorBoundary from './components/ErrorBoundary';
 import HomePage from './pages/HomePage';
 import DetailPage from './pages/DetailPage';
 import ComparePage from './pages/ComparePage';
@@ -7,16 +8,18 @@ import ChecklistPage from './pages/ChecklistPage';
 
 export default function App() {
   return (
-    <HashRouter>
-      <div className="min-h-screen bg-[#faf8f5]">
-        <Routes>
-          <Route path="/" element={<HomePage />} />
-          <Route path="/detail/:id" element={<DetailPage />} />
-          <Route path="/compare" element={<ComparePage />} />
-          <Route path="/favorites" element={<FavoritesPage />} />
-          <Route path="/checklist" element={<ChecklistPage />} />
-        </Routes>
-      </div>
-    </HashRouter>
+    <ErrorBoundary>
+      <HashRouter>
+        <div className="min-h-screen bg-[#faf8f5]">
+          <Routes>
+            <Route path="/" element={<HomePage />} />
+            <Route path="/detail/:id" element={<DetailPage />} />
+            <Route path="/compare" element={<ComparePage />} />
+            <Route path="/favorites" element={<FavoritesPage />} />
+            <Route path="/checklist" element={<ChecklistPage />} />
+          </Routes>
+        </div>
+      </HashRouter>
+    </ErrorBoundary>
   );
 }

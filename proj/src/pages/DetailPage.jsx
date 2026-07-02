@@ -91,6 +91,17 @@ export default function DetailPage() {
     loadDetail();
   }, [id]);
 
+  // 切换 tab 时自动加载周边配套
+  useEffect(() => {
+    if (activeTab === 'nearby' && !nearbyData && !nearbyLoading && community) {
+      setNearbyLoading(true);
+      api.getNearbyPoi(community._id)
+        .then((data) => setNearbyData(data))
+        .catch(() => setNearbyData(null))
+        .finally(() => setNearbyLoading(false));
+    }
+  }, [activeTab, community, nearbyData, nearbyLoading]);
+
   if (loading) {
     return (
       <div className="min-h-screen flex items-center justify-center">
@@ -167,26 +178,7 @@ export default function DetailPage() {
     }
   };
 
-  // 加载周边配套
-  const loadNearbyPoi = async () => {
-    if (nearbyData) return; // 已加载过
-    setNearbyLoading(true);
-    try {
-      const data = await api.getNearbyPoi(community._id);
-      setNearbyData(data);
-    } catch {
-      setNearbyData(null);
-    } finally {
-      setNearbyLoading(false);
-    }
-  };
 
-  // 切换 tab 时自动加载周边配套
-  useEffect(() => {
-    if (activeTab === 'nearby' && !nearbyData && !nearbyLoading) {
-      loadNearbyPoi();
-    }
-  }, [activeTab]);
 
   return (
     <div className="min-h-screen pb-16">

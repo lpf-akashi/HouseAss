@@ -7,8 +7,12 @@ export default defineConfig({
     port: 5173,
     open: true,
   },
+  define: {
+    'process.env.NODE_ENV': JSON.stringify('development'),
+  },
   build: {
     outDir: 'dist',
-    sourcemap: false,
+    sourcemap: true,
+    minify: false,
   },
 });
